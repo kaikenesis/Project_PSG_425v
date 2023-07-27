@@ -1,4 +1,5 @@
 #include "BaseCharacter.h"
+#include "Global.h"
 
 ABaseCharacter::ABaseCharacter()
 {

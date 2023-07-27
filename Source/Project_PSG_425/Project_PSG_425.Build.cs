@@ -7,6 +7,8 @@ public class Project_PSG_425 : ModuleRules
 	public Project_PSG_425(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+		PublicIncludePaths.Add(ModuleDirectory);
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
