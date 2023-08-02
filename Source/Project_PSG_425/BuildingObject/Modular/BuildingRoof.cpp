@@ -37,4 +37,7 @@ ABuildingRoof::ABuildingRoof()
 	//RoofWall Set Location
 	RoofWallSocketLeft->SetRelativeLocation(FVector(0.f, -150.f, 0.f));
 	RoofWallSocketRight->SetRelativeLocation(FVector(0.f, 150.f, 0.f));
+
+	// Set EBuildType
+	BuildType = Roof;
 }

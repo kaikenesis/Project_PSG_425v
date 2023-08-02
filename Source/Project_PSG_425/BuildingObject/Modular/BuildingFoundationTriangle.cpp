@@ -11,10 +11,10 @@ ABuildingFoundationTriangle::ABuildingFoundationTriangle()
 	CHelpers::CreateSceneComponent(this, &FoundationSocket2, "FoundationSocket2", FoundationSocket);
 	CHelpers::CreateSceneComponent(this, &FoundationSocket3, "FoundationSocket3", FoundationSocket);
 
-	CHelpers::CreateSceneComponent(this, &TriangleFoundationSocket, "TriangleFoundationSocket", BuildComponents);
-	CHelpers::CreateSceneComponent(this, &TriangleFoundationSocket1, "TriangleFoundationSocket1", TriangleFoundationSocket);
-	CHelpers::CreateSceneComponent(this, &TriangleFoundationSocket2, "TriangleFoundationSocket2", TriangleFoundationSocket);
-	CHelpers::CreateSceneComponent(this, &TriangleFoundationSocket3, "TriangleFoundationSocket3", TriangleFoundationSocket);
+	CHelpers::CreateSceneComponent(this, &FoundationTriangleSocket, "FoundationTriangleSocket", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &FoundationTriangleSocket1, "FoundationTriangleSocket1", FoundationTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &FoundationTriangleSocket2, "FoundationTriangleSocket2", FoundationTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &FoundationTriangleSocket3, "FoundationTriangleSocket3", FoundationTriangleSocket);
 
 	CHelpers::CreateSceneComponent(this, &WallSocket, "WallSocket", BuildComponents);
 	CHelpers::CreateSceneComponent(this, &WallSocket1, "WallSocket1", WallSocket);
@@ -36,14 +36,14 @@ ABuildingFoundationTriangle::ABuildingFoundationTriangle()
 	FoundationSocket3->SetRelativeLocation(FVector(0.f, 236.6f, 0.f));
 
 	// TriangleFoundation Set Location & Rotation
-	TriangleFoundationSocket1->SetRelativeLocation(FVector(149.98f, -86.59f, 0.f));
-	TriangleFoundationSocket1->SetRelativeRotation(FRotator(0.f, 60.f, 0.f));
+	FoundationTriangleSocket1->SetRelativeLocation(FVector(149.98f, -86.59f, 0.f));
+	FoundationTriangleSocket1->SetRelativeRotation(FRotator(0.f, 60.f, 0.f));
 
-	TriangleFoundationSocket2->SetRelativeLocation(FVector(-149.98f, -86.59f, 0.f));
-	TriangleFoundationSocket2->SetRelativeRotation(FRotator(0.f, -60.f, 0.f));
+	FoundationTriangleSocket2->SetRelativeLocation(FVector(-149.98f, -86.59f, 0.f));
+	FoundationTriangleSocket2->SetRelativeRotation(FRotator(0.f, -60.f, 0.f));
 
-	TriangleFoundationSocket3->SetRelativeLocation(FVector(0.f, 173.2f, 0.f));
-	TriangleFoundationSocket3->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
+	FoundationTriangleSocket3->SetRelativeLocation(FVector(0.f, 173.2f, 0.f));
+	FoundationTriangleSocket3->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 
 	// Wall Set Location & Rotation
 	WallSocket1->SetRelativeLocation(FVector(75.f, -43.3f, 235.f));
@@ -62,4 +62,7 @@ ABuildingFoundationTriangle::ABuildingFoundationTriangle()
 	RampSocket2->SetRelativeRotation(FRotator(0.f, 120.f, 0.f));
 
 	RampSocket3->SetRelativeLocation(FVector(0.f, 236.6f, 0.f));
+
+	// Set EBuildType
+	BuildType = FoundationTriangle;
 }

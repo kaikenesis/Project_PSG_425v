@@ -12,11 +12,11 @@ ABuildingCeiling::ABuildingCeiling()
 	CHelpers::CreateSceneComponent(this, &CeilingSocket3, "CeilingSocket3", CeilingSocket);
 	CHelpers::CreateSceneComponent(this, &CeilingSocket4, "CeilingSocket4", CeilingSocket);
 
-	CHelpers::CreateSceneComponent(this, &TriangleCeilingSocket, "TriangleCeilingSocket", BuildComponents);
-	CHelpers::CreateSceneComponent(this, &TriangleCeilingSocket1, "TriangleCeilingSocket1", TriangleCeilingSocket);
-	CHelpers::CreateSceneComponent(this, &TriangleCeilingSocket2, "TriangleCeilingSocket2", TriangleCeilingSocket);
-	CHelpers::CreateSceneComponent(this, &TriangleCeilingSocket3, "TriangleCeilingSocket3", TriangleCeilingSocket);
-	CHelpers::CreateSceneComponent(this, &TriangleCeilingSocket4, "TriangleCeilingSocket4", TriangleCeilingSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket, "CeilingTriangleSocket", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket1, "CeilingTriangleSocket1", CeilingTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket2, "CeilingTriangleSocket2", CeilingTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket3, "CeilingTriangleSocket3", CeilingTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket4, "CeilingTriangleSocket4", CeilingTriangleSocket);
 
 	CHelpers::CreateSceneComponent(this, &WallSocket, "WallSocket", BuildComponents);
 	CHelpers::CreateSceneComponent(this, &WallSocket1, "WallSocket1", WallSocket);
@@ -38,16 +38,16 @@ ABuildingCeiling::ABuildingCeiling()
 	CeilingSocket4->SetRelativeLocation(FVector(0.f, -300.f, 0.f));
 
 	// TriangleCeiling Set Location & Rotation
-	TriangleCeilingSocket1->SetRelativeLocation(FVector(236.6f, 0.f, 0.f));
-	TriangleCeilingSocket1->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+	CeilingTriangleSocket1->SetRelativeLocation(FVector(236.6f, 0.f, 0.f));
+	CeilingTriangleSocket1->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
 
-	TriangleCeilingSocket2->SetRelativeLocation(FVector(0.f, 236.6f, 0.f));
-	TriangleCeilingSocket2->SetRelativeRotation(FRotator(0.f, -180.f, 0.f));
+	CeilingTriangleSocket2->SetRelativeLocation(FVector(0.f, 236.6f, 0.f));
+	CeilingTriangleSocket2->SetRelativeRotation(FRotator(0.f, -180.f, 0.f));
 
-	TriangleCeilingSocket3->SetRelativeLocation(FVector(-236.6f, 0.f, 0.f));
-	TriangleCeilingSocket3->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	CeilingTriangleSocket3->SetRelativeLocation(FVector(-236.6f, 0.f, 0.f));
+	CeilingTriangleSocket3->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	TriangleCeilingSocket4->SetRelativeLocation(FVector(0.f, -236.6f, 0.f));
+	CeilingTriangleSocket4->SetRelativeLocation(FVector(0.f, -236.6f, 0.f));
 
 	// Wall Set Location & Rotation
 	WallSocket1->SetRelativeLocation(FVector(150.f, 0.f, 150.f));
@@ -75,4 +75,12 @@ ABuildingCeiling::ABuildingCeiling()
 	// Stairs, Roof Set Location
 	StairsSocket->SetRelativeLocation(FVector(0.f, 0.f, 160.f));
 	RoofSocket->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
+
+	// Set Mesh
+	UStaticMesh* mesh;
+	CHelpers::GetAsset(&mesh, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Ceiling.SM_Stylized_Wood_Ceiling'");
+	Mesh->SetStaticMesh(mesh);
+
+	// Set EBuildType
+	BuildType = Ceiling;
 }

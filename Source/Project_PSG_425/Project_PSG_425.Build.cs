@@ -10,7 +10,14 @@ public class Project_PSG_425 : ModuleRules
 
 		PublicIncludePaths.Add(ModuleDirectory);
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"Slate"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

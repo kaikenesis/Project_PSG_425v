@@ -78,4 +78,7 @@ ABuildingFoundation::ABuildingFoundation()
 	// Stairs, Roof Set Location
 	StairsSocket->SetRelativeLocation(FVector(0.f, 0.f, 245.f));
 	RoofSocket->SetRelativeLocation(FVector(0.f, 0.f, 235.f));
+
+	// Set EBuildType
+	BuildType = Foundation;
 }

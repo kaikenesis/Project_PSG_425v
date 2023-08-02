@@ -31,16 +31,16 @@ private:
 
 	//TriangleCeiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleCeilingSocket;
+		class USceneComponent* CeilingTriangleSocket;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleCeilingSocket1;
+		class USceneComponent* CeilingTriangleSocket1;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleCeilingSocket2;
+		class USceneComponent* CeilingTriangleSocket2;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleCeilingSocket3;
+		class USceneComponent* CeilingTriangleSocket3;
 
 	//Wall
 	UPROPERTY(EditDefaultsOnly)
