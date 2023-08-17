@@ -11,7 +11,16 @@ enum EBuildType
 	Foundation,
 	FoundationTriangle,
 	Roof,
-	Wall
+	RoofWall,
+	Wall,
+	Ramp
+};
+
+enum EMeshType
+{
+	Wood,
+	Stone,
+	Metal
 };
 
 UCLASS()
@@ -28,9 +37,18 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+		virtual void OnBeginOverlap(AActor* OverlapActor, AActor* OtherActor);
+
+	UFUNCTION()
+		virtual void OnEndOverlap(AActor* OverlapActor, AActor* OtherActor);
+
 public:
 	void SetMaterialCanBuild();
 	void SetMaterialCanNotBuild();
+
+	void SetBuildType(EBuildType Type);
+	virtual void SetMeshType(EMeshType Type);
 
 public:
 	UPROPERTY(EditDefaultsOnly)
@@ -45,4 +63,14 @@ private:
 
 public:
 	EBuildType BuildType;
+	EMeshType MeshType;
+
+	TArray<AActor*> OverlapActors;
+	bool IsBuilded = true;
+	bool bCanBuild = true;
+
+protected:
+	UStaticMesh* MeshWood;
+	UStaticMesh* MeshStone;
+	UStaticMesh* MeshMetal;
 };

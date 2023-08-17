@@ -16,9 +16,16 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* BuildComponents;
 
+	//BuildCollision
+	UPROPERTY(EditDefaultsOnly)
+		class USceneComponent* BuildCollisions;
+
+	UPROPERTY(EditDefaultsOnly)
+		class UBoxComponent* BuildCollision1;
+
 	//Ceiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* CeilingSocket;
+		class USceneComponent* CeilingSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* CeilingSocket1;
@@ -34,7 +41,7 @@ public:
 
 	//TriangleCeiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* CeilingTriangleSocket;
+		class USceneComponent* CeilingTriangleSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* CeilingTriangleSocket1;
@@ -50,7 +57,7 @@ public:
 
 	//Wall
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* WallSocket;
+		class USceneComponent* WallSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* WallSocket1;
@@ -82,5 +89,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* RoofSocket;
-
 };

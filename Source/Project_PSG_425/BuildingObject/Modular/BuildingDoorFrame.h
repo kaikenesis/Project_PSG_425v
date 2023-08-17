@@ -12,7 +12,7 @@ class PROJECT_PSG_425_API ABuildingDoorFrame : public ABuildingWall
 public:
 	ABuildingDoorFrame();
 
-private:
+public:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* DoorSocket;
 

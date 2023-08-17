@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AnimInstance/PlayerAnimInstance.h"
+#include "Components/BuildingComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -12,6 +13,8 @@ APlayerCharacter::APlayerCharacter()
 	// Create Component
 	CHelpers::CreateSceneComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", GetMesh());
 	CHelpers::CreateSceneComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
+
+	CHelpers::CreateActorComponent<UBuildingComponent>(this, &BuildingComponent, "BuildingComponent");
 
 	//Component Settings
 	//<Mesh>
@@ -65,6 +68,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::OnSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::OffSprint);
+}
+
+void APlayerCharacter::CheckSpawn()
+{
+	BuildingComponent->CheckSpawn();
+}
+
+void APlayerCharacter::Spawn()
+{
+	BuildingComponent->Spawn();
 }
 
 void APlayerCharacter::OnMoveForward(float Axis)

@@ -12,13 +12,20 @@ class PROJECT_PSG_425_API ABuildingWall : public ABaseBuildingObject
 public:
 	ABuildingWall();
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* BuildComponents;
 
+	//BuildCollision
+	UPROPERTY(EditDefaultsOnly)
+		class USceneComponent* BuildCollisions;
+
+	UPROPERTY(EditDefaultsOnly)
+		class UBoxComponent* BuildCollision1;
+
 	//Ceiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* CeilingSocket;
+		class USceneComponent* CeilingSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* CeilingSocket1;
@@ -32,9 +39,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* CeilingSocket4;
 
-	//TriangleCeiling
+	//CeilingTriangle
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* CeilingTriangleSocket;
+		class USceneComponent* CeilingTriangleSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* CeilingTriangleSocket1;
@@ -50,7 +57,7 @@ protected:
 
 	//Wall
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* WallSocket;
+		class USceneComponent* WallSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* WallSocket1;
@@ -66,7 +73,7 @@ protected:
 
 	//Roof
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* RoofSocket;
+		class USceneComponent* RoofSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* RoofSocket1;

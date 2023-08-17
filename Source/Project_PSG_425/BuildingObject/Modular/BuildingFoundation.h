@@ -12,13 +12,20 @@ class PROJECT_PSG_425_API ABuildingFoundation : public ABaseBuildingObject
 public:
 	ABuildingFoundation();
 
-private:
+public:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* BuildComponents;
 
+	//BuildCollision
+	UPROPERTY(EditDefaultsOnly)
+		class USceneComponent* BuildCollisions;
+
+	UPROPERTY(EditDefaultsOnly)
+		class UBoxComponent* BuildCollision1;
+
 	//Ceiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* FoundationSocket;
+		class USceneComponent* FoundationSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* FoundationSocket1;
@@ -34,23 +41,23 @@ private:
 
 	//TriangleCeiling
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleFoundationSocket;
+		class USceneComponent* FoundationTriangleSockets;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleFoundationSocket1;
+		class USceneComponent* FoundationTriangleSocket1;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleFoundationSocket2;
+		class USceneComponent* FoundationTriangleSocket2;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleFoundationSocket3;
+		class USceneComponent* FoundationTriangleSocket3;
 
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* TriangleFoundationSocket4;
+		class USceneComponent* FoundationTriangleSocket4;
 
 	//Wall
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* WallSocket;
+		class USceneComponent* WallSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* WallSocket1;
@@ -66,7 +73,7 @@ private:
 
 	//Ramp
 	UPROPERTY(EditDefaultsOnly)
-		class USceneComponent* RampSocket;
+		class USceneComponent* RampSockets;
 
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* RampSocket1;

@@ -1,43 +1,50 @@
 #include "BuildingCeiling.h"
 #include "Global.h"
+#include "Components/BoxComponent.h"
 
 ABuildingCeiling::ABuildingCeiling()
 {
 	// CreateComponent
 	CHelpers::CreateSceneComponent(this, &BuildComponents, "BuildComponents", Mesh);
 
-	CHelpers::CreateSceneComponent(this, &CeilingSocket, "CeilingSocket", BuildComponents);
-	CHelpers::CreateSceneComponent(this, &CeilingSocket1, "CeilingSocket1", CeilingSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingSocket2, "CeilingSocket2", CeilingSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingSocket3, "CeilingSocket3", CeilingSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingSocket4, "CeilingSocket4", CeilingSocket);
+	CHelpers::CreateSceneComponent(this, &BuildCollisions, "BuildCollisions", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &BuildCollision1, "BuildCollision1", BuildCollisions);
 
-	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket, "CeilingTriangleSocket", BuildComponents);
-	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket1, "CeilingTriangleSocket1", CeilingTriangleSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket2, "CeilingTriangleSocket2", CeilingTriangleSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket3, "CeilingTriangleSocket3", CeilingTriangleSocket);
-	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket4, "CeilingTriangleSocket4", CeilingTriangleSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingSockets, "CeilingSockets", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &CeilingSocket1, "CeilingSocket1", CeilingSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingSocket2, "CeilingSocket2", CeilingSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingSocket3, "CeilingSocket3", CeilingSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingSocket4, "CeilingSocket4", CeilingSockets);
 
-	CHelpers::CreateSceneComponent(this, &WallSocket, "WallSocket", BuildComponents);
-	CHelpers::CreateSceneComponent(this, &WallSocket1, "WallSocket1", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket2, "WallSocket2", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket3, "WallSocket3", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket4, "WallSocket4", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket5, "WallSocket5", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket6, "WallSocket6", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket7, "WallSocket7", WallSocket);
-	CHelpers::CreateSceneComponent(this, &WallSocket8, "WallSocket8", WallSocket);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSockets, "CeilingTriangleSockets", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket1, "CeilingTriangleSocket1", CeilingTriangleSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket2, "CeilingTriangleSocket2", CeilingTriangleSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket3, "CeilingTriangleSocket3", CeilingTriangleSockets);
+	CHelpers::CreateSceneComponent(this, &CeilingTriangleSocket4, "CeilingTriangleSocket4", CeilingTriangleSockets);
+
+	CHelpers::CreateSceneComponent(this, &WallSockets, "WallSockets", BuildComponents);
+	CHelpers::CreateSceneComponent(this, &WallSocket1, "WallSocket1", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket2, "WallSocket2", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket3, "WallSocket3", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket4, "WallSocket4", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket5, "WallSocket5", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket6, "WallSocket6", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket7, "WallSocket7", WallSockets);
+	CHelpers::CreateSceneComponent(this, &WallSocket8, "WallSocket8", WallSockets);
 
 	CHelpers::CreateSceneComponent(this, &StairsSocket, "StairsSocket", BuildComponents);
 	CHelpers::CreateSceneComponent(this, &RoofSocket, "RoofSocket", BuildComponents);
 
-	// Ceiling Set Location
+	// Set BuildCollision
+	BuildCollision1->SetBoxExtent(FVector(130.f, 130.f, 10.f));
+	
+	// Set Ceiling Location
 	CeilingSocket1->SetRelativeLocation(FVector(300.f, 0.f, 0.f));
 	CeilingSocket2->SetRelativeLocation(FVector(0.f, 300.f, 0.f));
 	CeilingSocket3->SetRelativeLocation(FVector(-300.f, 0.f, 0.f));
 	CeilingSocket4->SetRelativeLocation(FVector(0.f, -300.f, 0.f));
 
-	// TriangleCeiling Set Location & Rotation
+	// Set CeilingTriangle Location & Rotation
 	CeilingTriangleSocket1->SetRelativeLocation(FVector(236.6f, 0.f, 0.f));
 	CeilingTriangleSocket1->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
 
@@ -49,7 +56,7 @@ ABuildingCeiling::ABuildingCeiling()
 
 	CeilingTriangleSocket4->SetRelativeLocation(FVector(0.f, -236.6f, 0.f));
 
-	// Wall Set Location & Rotation
+	// Set Wall Location & Rotation
 	WallSocket1->SetRelativeLocation(FVector(150.f, 0.f, 150.f));
 	WallSocket1->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
@@ -72,15 +79,16 @@ ABuildingCeiling::ABuildingCeiling()
 	WallSocket8->SetRelativeLocation(FVector(0.f, -150.f, -150.f));
 	WallSocket8->SetRelativeRotation(FRotator(0.f, -180.f, 0.f));
 
-	// Stairs, Roof Set Location
+	// Set Stairs, Roof Location
 	StairsSocket->SetRelativeLocation(FVector(0.f, 0.f, 160.f));
 	RoofSocket->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
 
 	// Set Mesh
-	UStaticMesh* mesh;
-	CHelpers::GetAsset(&mesh, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Ceiling.SM_Stylized_Wood_Ceiling'");
-	Mesh->SetStaticMesh(mesh);
+	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Ceiling.SM_Stylized_Wood_Ceiling'");
+	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Ceiling.SM_Stylized_Stone_Ceiling'");
+	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Ceiling.SM_Stylized_Metal_Ceiling'");
+	Mesh->SetStaticMesh(MeshWood);
 
 	// Set EBuildType
-	BuildType = Ceiling;
+	BuildType = EBuildType::Ceiling;
 }

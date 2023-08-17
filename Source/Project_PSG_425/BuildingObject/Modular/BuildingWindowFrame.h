@@ -12,7 +12,7 @@ class PROJECT_PSG_425_API ABuildingWindowFrame : public ABuildingWall
 public:
 	ABuildingWindowFrame();
 
-private:
+public:
 	UPROPERTY(EditDefaultsOnly)
 		class USceneComponent* WindowSocket;
 };
