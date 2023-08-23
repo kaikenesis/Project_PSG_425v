@@ -16,7 +16,8 @@ public class Project_PSG_425 : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"Slate"
+			"Slate",
+			"UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
