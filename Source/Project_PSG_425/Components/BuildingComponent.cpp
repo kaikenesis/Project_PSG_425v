@@ -1,18 +1,21 @@
 #include "BuildingComponent.h"
 #include "GameFramework/Character.h"
 #include "Global.h"
+#include "Characters/BaseCharacter.h"
 #include "BuildingObject/Modular/BuildingCeiling.h"
 #include "BuildingObject/Modular/BuildingCeilingTriangle.h"
 #include "BuildingObject/Modular/BuildingFoundation.h"
 #include "BuildingObject/Modular/BuildingFoundationTriangle.h"
 #include "BuildingObject/Modular/BuildingRoof.h"
 #include "BuildingObject/Modular/BuildingWall.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 UBuildingComponent::UBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	CHelpers::GetClass(&BuildMeshClass, "Class'/Script/Project_PSG_425.BuildingCeiling'");
+	CHelpers::GetClass(&BuildingWidgetClass, "Class'/Script/Project_PSG_425.HUDWidget'");
 }
 
 
@@ -20,8 +23,11 @@ void UBuildingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerCharacter = Cast<ACharacter>(GetOwner());
-	OwnerPlayerController = Cast<APlayerController>(OwnerCharacter->GetController());
+	OwnerPlayerController = Cast<APlayerController>(GetOwner());
+	CheckNull(OwnerPlayerController);
+
+	TrytoCreateBuildingWidget();
+	
 }
 
 
@@ -69,7 +75,7 @@ void UBuildingComponent::BuildTraceResult(FHitResult& OutHitResult)
 
 	TArray<AActor*> ignoreActor;
 	ignoreActor.Add(BuildMesh);
-	ignoreActor.Add(OwnerCharacter);
+	ignoreActor.Add(UGameplayStatics::GetPlayerCharacter(this, 0));
 	ignoreActor.Add(OwnerPlayerController->PlayerCameraManager);
 	
 
@@ -160,7 +166,8 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 void UBuildingComponent::CheckSpawn()
 {
-	OwnerPlayerController->bShowMouseCursor = true;
+	if(!!OwnerPlayerController)
+		OwnerPlayerController->bShowMouseCursor = true;
 
 	if (!!BuildMeshClass && !BuildMesh)
 	{
@@ -371,5 +378,32 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 			break;
 	}
 
+}
+
+void UBuildingComponent::TrytoCreateBuildingWidget()
+{
+	if (!!BuildingWidgetClass)
+	{
+		TArray<class UUserWidget*> foundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), foundWidgets, BuildingWidgetClass);
+
+		for (int i = 0; i < foundWidgets.Num(); i++)
+		{
+			BuildingWidget = foundWidgets[i];
+		}
+		
+		BuildingWidget = CreateWidget(OwnerPlayerController, BuildingWidgetClass);
+		BuildingWidget->AddToViewport();
+	}
+}
+
+void UBuildingComponent::ShowBuildingMenu(bool Success)
+{
+	/*if(!!BuildingWidget)
+		BuildingWidget->*/
+}
+
+void UBuildingComponent::HideBuildingMenu(bool Success)
+{
 }
 

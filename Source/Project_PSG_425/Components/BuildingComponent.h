@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BuildingObject/BaseBuildingObject.h"
-#include "Interface/IBuilding.h"
 #include "BuildingComponent.generated.h"
 
 
@@ -29,18 +28,25 @@ public:
 
 	void GetBuildTransform(ABaseBuildingObject* InHitActor, TArray<USceneComponent*>& OutComps);
 
+	void TrytoCreateBuildingWidget();
+
+	void ShowBuildingMenu(bool Success = false);
+	void HideBuildingMenu(bool Success = false);
+
 private:
-	class ACharacter* OwnerCharacter;
 	class APlayerController* OwnerPlayerController;
 
 	class ABaseBuildingObject* BuildMesh;
 	class ABaseBuildingObject* NewHitActor;
-	class TSubclassOf<ABaseBuildingObject> BuildMeshClass;
+	TSubclassOf<class ABaseBuildingObject> BuildMeshClass;
 
 	TArray<FTransform> SocketTransform;
 	FTransform SpawnTransform;
 
 	TArray<AActor*> OverlapActors;
+
+	TSubclassOf<class UUserWidget> BuildingWidgetClass;
+	class UUserWidget* BuildingWidget;
 
 	bool bInRange = false;
 };

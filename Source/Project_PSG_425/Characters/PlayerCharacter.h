@@ -2,11 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
-#include "Interface/IBuilding.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class PROJECT_PSG_425_API APlayerCharacter : public ABaseCharacter, public IIBuilding
+class PROJECT_PSG_425_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -20,10 +19,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-public:
-	virtual void CheckSpawn() override;
-	virtual void Spawn() override;
 
 private: // Axis Event
 	void OnMoveForward(float Axis);
@@ -39,9 +34,6 @@ private: // Action Event
 private: // SpringArm
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;
-
-	UPROPERTY(VisibleDefaultsOnly)
-		class UBuildingComponent* BuildingComponent;
 
 protected: // Camera
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)

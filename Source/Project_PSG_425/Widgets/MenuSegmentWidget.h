@@ -4,6 +4,9 @@
 #include "Blueprint/UserWidget.h"
 #include "MenuSegmentWidget.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectedSignature, UMenuSegmentWidget*, InMenuSegmentWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClickedSignature, UMenuSegmentWidget*, InMenuSegmentWidget);
+
 UCLASS()
 class PROJECT_PSG_425_API UMenuSegmentWidget : public UUserWidget
 {
@@ -32,6 +35,13 @@ public:
 	UFUNCTION()
 		bool SetSelection(bool InSelected);
 
+public:
+	UPROPERTY(BlueprintAssignable)
+		FSelectedSignature OnSelected;
+
+	UPROPERTY(BlueprintAssignable)
+		FClickedSignature OnClicked;
+
 protected:
 	int32 SegmentIndex = 0;
 	int32 SegmentCount = 16;
@@ -43,16 +53,16 @@ protected:
 	bool UpdateIconColor = true;
 
 protected:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Color")
 		FLinearColor IconColor = FLinearColor(1.f, 1.f, 1.f, 1.f);
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Color")
 		FLinearColor BackgroundColor = FLinearColor(0.05f, 0.05f, 0.05f, 0.5f);
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Color")
 		FLinearColor SelectedColor = FLinearColor(1.f, 0.5f, 0.f, 1.f);
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Color")
 		FLinearColor DefaultColor = FLinearColor(0.35f, 0.3f, 0.3f, 1.f);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Texture")

@@ -1,14 +1,13 @@
 #include "CraftRPGPlayerController.h"
 #include "Global.h"
-#include "BuildingObject/BaseBuildingObject.h"
-#include "BuildingObject/Modular/BuildingCeiling.h"
 #include "InputCoreTypes.h"
-#include "Camera/PlayerCameraManager.h"
-#include "Characters/PlayerCharacter.h"
+#include "Components/BuildingComponent.h"
 
 ACraftRPGPlayerController::ACraftRPGPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	CHelpers::CreateActorComponent(this, &BuildingComponent, "BuildingComponent");
 }
 
 void ACraftRPGPlayerController::Tick(float DeltaTime)
@@ -23,20 +22,17 @@ void ACraftRPGPlayerController::SetupInputComponent()
 
 	InputComponent->BindKey(EKeys::One, IE_Pressed, this, &ACraftRPGPlayerController::CheckBuild);
 	InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &ACraftRPGPlayerController::SpawnBuild);
+	//InputComponent->BindKey(EKeys::Q, IE_Pressed, this, &UBuildingComponent::ShowBuildingMenu);
 }
 
 void ACraftRPGPlayerController::CheckBuild()
 {
-	APlayerCharacter* player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-
-	if(!!player)
-		player->CheckSpawn();
+	if(!!BuildingComponent)
+		BuildingComponent->CheckSpawn();
 }
 
 void ACraftRPGPlayerController::SpawnBuild()
 {
-	APlayerCharacter* player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-
-	if (!!player)
-		player->Spawn();
+	if (!!BuildingComponent)
+		BuildingComponent->Spawn();
 }

@@ -16,17 +16,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupInputComponent() override;
-	
+
 private:
 	void CheckBuild();
 	void SpawnBuild();
 
-protected:
-	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<class ABuildingCeiling> Ceiling;
-
-	UPROPERTY(EditDefaultsOnly)
-		class ABaseBuildingObject* BaseBuildObject;
+private:
+	UPROPERTY(VisibleDefaultsOnly)
+		class UBuildingComponent* BuildingComponent;
 
 private:
 	FTransform SpawnTransform;
