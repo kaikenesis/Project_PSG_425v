@@ -11,28 +11,56 @@ class PROJECT_PSG_425_API UBuildingMenuWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void PreConstruct(bool IsDesignTime);
-	void Construct();
-
-	void Tick(FGeometry MyGeometry, float InDeltaTime);
+	virtual void NativePreConstruct() override;
+	virtual void NativeConstruct() override;
 
 public:
-	void ConstructWidget(bool Success = false);
-	void UpdateWidget(bool Success = false);
-	void UpdateBuildingList(FDataTableRowHandle InBuildingListHandle, bool Success = false);
-	void UpdateBuildingDataTable(UDataTable* InDataTable, bool Success = false);
+	bool ConstructWidget();
+	bool UpdateWidget();
+	bool UpdateBuildingList(FDataTableRowHandle InBuildingListHandle);
+	bool UpdateBuildingDataTable(UDataTable* InDataTable);
+	bool UpdateSegments();
+	void CorrectPageDetails(TArray<FDataTableRowHandle> InBuildingObjects, TArray<FDataTableRowHandle> OutBuildingObjects, bool OutAddNextPage = false, bool OutAddPrevPage = false);
 
-private:
+public:
+	UPROPERTY(meta = (BindWidget))
+		class UCanvasPanel* SegmentsCanvasPanel;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		FDataTableRowHandle DefaultBuildingList;
-	FDataTableRowHandle CurrentBuildingList;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		UDataTable* DefaultBuildingDataTable;
-	UDataTable* CurrentBuildingDataTable;
-
-	TArray<FDataTableRowHandle> BuildingObjects;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		int32 MaxSegmentCount = 6;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		int32 Pages = 0;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		int32 CurrentPage = 1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+		FLinearColor PageIconsColor = FLinearColor(0.255208f, 0.255208f, 0.255208f, 1.f);
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+		FDataTableRowHandle CurrentBuildingList;
+
+	UDataTable* CurrentBuildingDataTable;
+	class UMenuSegmentWidget* PrevPageSegment;
+	class UMenuSegmentWidget* NextPageSegment;
+
+	TArray<FDataTableRowHandle> BuildingObjects;
+	TArray<class UMenuSegmentWidget*> MenuSegments;
+	
+	TSubclassOf<class UMenuSegmentWidget*> BuildingMenuSegmentClass;
+
+	UPROPERTY(EditDefaultsOnly)
+		UTexture2D* PrevPageIcon;
+
+	UPROPERTY(EditDefaultsOnly)
+		UTexture2D* NextPageIcon;
+
 };

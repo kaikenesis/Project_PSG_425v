@@ -3,6 +3,14 @@
 #include "Components/Image.h"
 #include "Components/Overlay.h"
 
+void UMenuSegmentWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	UpdateWidget();
+	ClearSelection();
+}
+
 void UMenuSegmentWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -11,16 +19,9 @@ void UMenuSegmentWidget::NativeConstruct()
 	ClearSelection();
 }
 
-bool UMenuSegmentWidget::Initialize()
-{
-	Super::Initialize();
-
-	return true;
-}
-
 bool UMenuSegmentWidget::UpdateWidget()
 {
-	SegmentCount = UKismetMathLibrary::Clamp(SegmentCount, 1, 16);
+	SegmentCount = FMath::Clamp(SegmentCount, 1, 16);
 	SegmentAngle = 360.f / (float)SegmentCount;
 
 	float value = (float)SegmentIndex * SegmentAngle;
@@ -35,7 +36,7 @@ bool UMenuSegmentWidget::UpdateWidget()
 	UTexture2D* frameTexture = SegmentFrameTextures[SegmentCount - 1];
 	if(!!frameTexture)
 		if(!!SegmentFrame)
-			SegmentFrame->SetBrushFromTexture(imageTexture);
+			SegmentFrame->SetBrushFromTexture(frameTexture);
 
 	if(!!IconTexture)
 		if(!!SegmentIcon)

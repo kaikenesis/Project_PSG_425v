@@ -20,6 +20,7 @@ public:
 private:
 	void CheckBuild();
 	void SpawnBuild();
+	void ShowBuildingMenu();
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)

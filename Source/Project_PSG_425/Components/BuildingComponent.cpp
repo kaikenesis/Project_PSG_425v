@@ -9,13 +9,14 @@
 #include "BuildingObject/Modular/BuildingRoof.h"
 #include "BuildingObject/Modular/BuildingWall.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Widgets/HUDWidget.h"
 
 UBuildingComponent::UBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	CHelpers::GetClass(&BuildMeshClass, "Class'/Script/Project_PSG_425.BuildingCeiling'");
-	CHelpers::GetClass(&BuildingWidgetClass, "Class'/Script/Project_PSG_425.HUDWidget'");
+	CHelpers::GetClass(&BuildingWidgetClass, "/Game/Widgets/WB_HUD");
 }
 
 
@@ -394,13 +395,17 @@ void UBuildingComponent::TrytoCreateBuildingWidget()
 		
 		BuildingWidget = CreateWidget(OwnerPlayerController, BuildingWidgetClass);
 		BuildingWidget->AddToViewport();
+
 	}
 }
 
 void UBuildingComponent::ShowBuildingMenu(bool Success)
 {
-	/*if(!!BuildingWidget)
-		BuildingWidget->*/
+	CheckNull(BuildingWidget)
+	UHUDWidget* hudWidget = Cast<UHUDWidget>(BuildingWidget);
+
+	CheckNull(hudWidget)
+	hudWidget->ShowBuildingMenu_Interface();
 }
 
 void UBuildingComponent::HideBuildingMenu(bool Success)

@@ -13,27 +13,19 @@ class PROJECT_PSG_425_API UMenuSegmentWidget : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	virtual bool Initialize() override; // UserWidget¿« BeginPlay
 
 public:
-	UFUNCTION()
-		virtual bool UpdateWidget();
+	virtual	bool UpdateWidget();
 	
-	UFUNCTION()
-		bool CheckSelection(float CurrentRotation);
-	
-	UFUNCTION()
-		bool ClearSelection();
+	bool CheckSelection(float CurrentRotation);
+	bool ClearSelection();
 
-	UFUNCTION()
-		void TryClick();
+	void TryClick();
+	void SetSegmentIndexAndCount(int32 NewSegmentIndex, int32 NewSegmentCount);
 
-	UFUNCTION()
-		void SetSegmentIndexAndCount(int32 NewSegmentIndex, int32 NewSegmentCount);
-
-	UFUNCTION()
-		bool SetSelection(bool InSelected);
+	bool SetSelection(bool InSelected);
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -42,9 +34,34 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FClickedSignature OnClicked;
 
-protected:
-	int32 SegmentIndex = 0;
-	int32 SegmentCount = 16;
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		int32 SegmentIndex = 4;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		int32 SegmentCount = 16;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		FLinearColor IconColor = FLinearColor(1.f, 1.f, 1.f, 1.f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		FLinearColor BackgroundColor = FLinearColor(0.05f, 0.05f, 0.05f, 0.5f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		FLinearColor SelectedColor = FLinearColor(1.f, 0.5f, 0.f, 1.f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		FLinearColor DefaultColor = FLinearColor(0.35f, 0.3f, 0.3f, 1.f);
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Default")
+		class UTexture2D* IconTexture;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		TArray<class UTexture2D*> SegmentImageTextures;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default")
+		TArray<class UTexture2D*> SegmentFrameTextures;
 
 	float Rotation = 0.f;
 	float SegmentAngle = 0.f;
@@ -52,29 +69,7 @@ protected:
 	bool IsSelected;
 	bool UpdateIconColor = true;
 
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Color")
-		FLinearColor IconColor = FLinearColor(1.f, 1.f, 1.f, 1.f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Color")
-		FLinearColor BackgroundColor = FLinearColor(0.05f, 0.05f, 0.05f, 0.5f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Color")
-		FLinearColor SelectedColor = FLinearColor(1.f, 0.5f, 0.f, 1.f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Color")
-		FLinearColor DefaultColor = FLinearColor(0.35f, 0.3f, 0.3f, 1.f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Texture")
-		class UTexture2D* IconTexture;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Texture")
-		TArray<class UTexture2D*> SegmentImageTextures;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Texture")
-		TArray<class UTexture2D*> SegmentFrameTextures;
-
-protected:
+public:
 	UPROPERTY(meta = (BindWidget))
 		class UImage* SegmentBackground;
 

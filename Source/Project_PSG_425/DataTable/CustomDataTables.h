@@ -12,16 +12,16 @@ struct FBuildingList : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FDataTableRowHandle Handle;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FName Name;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FName Description;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		TArray<FDataTableRowHandle> BuildingObjects;
 };
 
@@ -31,37 +31,37 @@ struct FBuildingObjectSettings : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FDataTableRowHandle Handle;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FName Name;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		TSubclassOf<class ABaseBuildingObject> Class;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		UTexture2D* Icon;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FName Description;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		UStaticMesh* StaticMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float MaxBurability;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		bool bCanBeDamaged = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		bool bUseMeshSockets = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FTransform CorrectMeshTransform;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		FDataTableRowHandle BuildingRequirements;
 };
 

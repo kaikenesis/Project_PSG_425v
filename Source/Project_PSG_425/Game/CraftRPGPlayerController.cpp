@@ -22,7 +22,7 @@ void ACraftRPGPlayerController::SetupInputComponent()
 
 	InputComponent->BindKey(EKeys::One, IE_Pressed, this, &ACraftRPGPlayerController::CheckBuild);
 	InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &ACraftRPGPlayerController::SpawnBuild);
-	//InputComponent->BindKey(EKeys::Q, IE_Pressed, this, &UBuildingComponent::ShowBuildingMenu);
+	InputComponent->BindKey(EKeys::Q, IE_Pressed, this, &ACraftRPGPlayerController::ShowBuildingMenu);
 }
 
 void ACraftRPGPlayerController::CheckBuild()
@@ -35,4 +35,10 @@ void ACraftRPGPlayerController::SpawnBuild()
 {
 	if (!!BuildingComponent)
 		BuildingComponent->Spawn();
+}
+
+void ACraftRPGPlayerController::ShowBuildingMenu()
+{
+	if (!!BuildingComponent)
+		BuildingComponent->ShowBuildingMenu();
 }

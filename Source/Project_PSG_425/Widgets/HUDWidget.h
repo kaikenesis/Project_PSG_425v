@@ -17,4 +17,8 @@ public:
 public:
 	virtual void ShowBuildingMenu_Interface() override;
 	virtual void HideBuildingMenu_Interface() override;
+
+private:
+	UPROPERTY(meta = (BindWidget))
+		class UBuildingMenuWidget* BuildingMenu;
 };
