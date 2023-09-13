@@ -28,15 +28,13 @@ bool UMenuSegmentWidget::UpdateWidget()
 	Rotation = value > 180.f ? value - 360 : value;
 
 	//Image Texture Brush Settings
-	UTexture2D* imageTexture = SegmentImageTextures[SegmentCount - 1];
-	if(!!imageTexture)
+	if(!!SegmentImageTextures[SegmentCount - 1])
 		if(!!SegmentBackground)
-			SegmentBackground->SetBrushFromTexture(imageTexture);
+			SegmentBackground->SetBrushFromTexture(SegmentImageTextures[SegmentCount - 1]);
 
-	UTexture2D* frameTexture = SegmentFrameTextures[SegmentCount - 1];
-	if(!!frameTexture)
+	if(!!SegmentFrameTextures[SegmentCount - 1])
 		if(!!SegmentFrame)
-			SegmentFrame->SetBrushFromTexture(frameTexture);
+			SegmentFrame->SetBrushFromTexture(SegmentFrameTextures[SegmentCount - 1]);
 
 	if(!!IconTexture)
 		if(!!SegmentIcon)
@@ -54,7 +52,29 @@ bool UMenuSegmentWidget::UpdateWidget()
 
 bool UMenuSegmentWidget::CheckSelection(float CurrentRotation)
 {
-	return true;
+	// 스크린의 마우스위치와 위젯의 회전에 따라서 위젯선택
+	float returnValue;
+
+	returnValue = CurrentRotation > 0 && Rotation == 180 ? CurrentRotation - 360.f : CurrentRotation;
+
+	if ((Rotation * -1) + (SegmentAngle / 2) > returnValue && (Rotation * -1) - (SegmentAngle / 2) < returnValue)
+	{
+		if (IsSelected == false)
+		{
+			SetSelection(true);
+			return true;
+		}
+	}
+	else
+	{
+		if (IsSelected == true)
+		{
+			ClearSelection();
+		}
+			return false;
+	}
+
+	return false;
 }
 
 bool UMenuSegmentWidget::ClearSelection()
@@ -71,8 +91,11 @@ bool UMenuSegmentWidget::ClearSelection()
 
 void UMenuSegmentWidget::TryClick()
 {
-	//if(GetIsEnabled()&&IsSelected)
-		//TODO: OnClicked Delegate 호출
+	if (GetIsEnabled() && IsSelected)
+	{
+		if (OnClicked.IsBound())
+			OnClicked.Broadcast(this);
+	}
 }
 
 void UMenuSegmentWidget::SetSegmentIndexAndCount(int32 NewSegmentIndex, int32 NewSegmentCount)
@@ -95,7 +118,8 @@ bool UMenuSegmentWidget::SetSelection(bool InSelected)
 		FLinearColor color = UpdateIconColor ? SelectedColor : FLinearColor(1.f, 1.f, 1.f);
 		SegmentIcon->SetColorAndOpacity(color);
 
-		//TODO: OnSelected Delegate 호출
+		if (OnSelected.IsBound())
+			OnSelected.Broadcast(this);
 
 		return true;
 	}
@@ -103,6 +127,4 @@ bool UMenuSegmentWidget::SetSelection(bool InSelected)
 	{
 		return ClearSelection();
 	}
-
-	return true;
 }

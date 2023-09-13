@@ -18,9 +18,10 @@ public:
 	virtual void SetupInputComponent() override;
 
 private:
-	void CheckBuild();
-	void SpawnBuild();
+	void TryBuild();
+	void FinishBuild();
 	void ShowBuildingMenu();
+	void HideBuildingMenu();
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)

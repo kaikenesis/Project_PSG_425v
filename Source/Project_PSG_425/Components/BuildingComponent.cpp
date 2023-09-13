@@ -167,9 +167,6 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 void UBuildingComponent::CheckSpawn()
 {
-	if(!!OwnerPlayerController)
-		OwnerPlayerController->bShowMouseCursor = true;
-
 	if (!!BuildMeshClass && !BuildMesh)
 	{
 		FTransform transform;
@@ -184,15 +181,18 @@ void UBuildingComponent::CheckSpawn()
 
 void UBuildingComponent::Spawn()
 {
-	if (!!BuildMesh && BuildMesh->bCanBuild && bInRange)
+	if (!!BuildMesh)
 	{
-		FTransform transform;
-		transform = UKismetMathLibrary::MakeTransform(SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), FVector(1.f, 1.f, 1.f));
+		if (BuildMesh->bCanBuild && bInRange)
+		{
+			FTransform transform;
+			transform = UKismetMathLibrary::MakeTransform(SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), FVector(1.f, 1.f, 1.f));
 
-		GetWorld()->SpawnActor<ABaseBuildingObject>(BuildMesh->GetClass(), transform);
+			GetWorld()->SpawnActor<ABaseBuildingObject>(BuildMesh->GetClass(), transform);
+		}
+		else
+			CLog::Print("Can not Spawn");
 	}
-	else
-		CLog::Print("Can not Spawn");
 }
 
 void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArray<USceneComponent*>& OutComps)
@@ -410,5 +410,10 @@ void UBuildingComponent::ShowBuildingMenu(bool Success)
 
 void UBuildingComponent::HideBuildingMenu(bool Success)
 {
+	CheckNull(BuildingWidget)
+		UHUDWidget* hudWidget = Cast<UHUDWidget>(BuildingWidget);
+
+	CheckNull(hudWidget)
+		hudWidget->HideBuildingMenu_Interface();
 }
 

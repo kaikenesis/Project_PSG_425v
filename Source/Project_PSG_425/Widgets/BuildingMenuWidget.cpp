@@ -1,10 +1,18 @@
 #include "BuildingMenuWidget.h"
-#include "DataTable/CustomDataTables.h"
 #include "Global.h"
+#include "DataTable/CustomDataTables.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Button.h"
 #include "BuildingMenuSegmentWidget.h"
 #include "MenuSegmentWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+
+UBuildingMenuWidget::UBuildingMenuWidget(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
+{
+	CHelpers::GetClass(&BuildingMenuSegmentClass, "/Game/Widgets/WB_BuildingMenuSegment");
+	CHelpers::GetClass(&MenuSegmentClass, "/Game/Widgets/WB_MenuSegment");
+}
 
 void UBuildingMenuWidget::NativePreConstruct()
 {
@@ -17,7 +25,19 @@ void UBuildingMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	BtnClick->OnClicked.AddDynamic(this, &UBuildingMenuWidget::OnClicked);
+
 	ConstructWidget();
+}
+
+void UBuildingMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	UpdateMouseRotation();
+	
+	for (int i = 0; i < MenuSegments.Num(); i++)
+		MenuSegments[i]->CheckSelection(Rotation);
 }
 
 bool UBuildingMenuWidget::ConstructWidget()
@@ -31,17 +51,12 @@ bool UBuildingMenuWidget::ConstructWidget()
 
 bool UBuildingMenuWidget::UpdateWidget()
 {
-	bool result;
-
 	MaxSegmentCount = FMath::Clamp(MaxSegmentCount, 3, 16);
 
+	bool result;
+
 	if (!!CurrentBuildingList.DataTable)
-	{
-		if (CurrentBuildingList.RowName != FName("None"))
-			result = true;
-		else
-			result = false;
-	}
+		result = CurrentBuildingList.RowName != FName("None");
 	else
 		result = false;
 
@@ -81,7 +96,6 @@ bool UBuildingMenuWidget::UpdateBuildingDataTable(UDataTable* InDataTable)
 		TArray<FName> outRowNames = CurrentBuildingDataTable->GetRowNames();
 
 		BuildingObjects.Empty();
-		CLog::Print(BuildingObjects.Num());
 
 		for (const auto& rowName : outRowNames)
 		{
@@ -105,15 +119,13 @@ bool UBuildingMenuWidget::UpdateSegments()
 {
 	SegmentsCanvasPanel->ClearChildren();
 	MenuSegments.Empty();
-	bool addNextPage = false;
-	bool addPrevPage = false;
 
 	TArray<FDataTableRowHandle> resultBuildingObjects;
-	CorrectPageDetails(BuildingObjects, resultBuildingObjects, addNextPage, addPrevPage);
+	CorrectPageDetails(BuildingObjects, resultBuildingObjects);
 
 	for (int i = 0; i < resultBuildingObjects.Num(); i++)
 	{
-		UBuildingMenuSegmentWidget* buildingMenuSegment = CreateWidget<UBuildingMenuSegmentWidget>(this);
+		UBuildingMenuSegmentWidget* buildingMenuSegment = CreateWidget<UBuildingMenuSegmentWidget>(this, BuildingMenuSegmentClass);
 
 		buildingMenuSegment->BuildingObjectHandle = resultBuildingObjects[i];
 		buildingMenuSegment->SegmentIndex = i;
@@ -122,9 +134,9 @@ bool UBuildingMenuWidget::UpdateSegments()
 		MenuSegments.Add(buildingMenuSegment);
 	}
 	
-	if (addPrevPage == true)
+	if (AddPrevPage == true)
 	{
-		PrevPageSegment = CreateWidget<UMenuSegmentWidget>(this);
+		PrevPageSegment = CreateWidget<UMenuSegmentWidget>(this, MenuSegmentClass);
 		
 		if(!!PrevPageIcon)
 			PrevPageSegment->IconTexture = PrevPageIcon;
@@ -132,11 +144,12 @@ bool UBuildingMenuWidget::UpdateSegments()
 		PrevPageSegment->IconColor = PageIconsColor;
 
 		MenuSegments.Insert(PrevPageSegment, 0);
+		PrevPageSegment->OnClicked.AddDynamic(this, &UBuildingMenuWidget::PrevPageClicked);
 	}
 
-	if (addNextPage == true)
+	if (AddNextPage == true)
 	{
-		NextPageSegment = CreateWidget<UMenuSegmentWidget>(this);
+		NextPageSegment = CreateWidget<UMenuSegmentWidget>(this, MenuSegmentClass);
 
 		if (!!NextPageIcon)
 			NextPageSegment->IconTexture = NextPageIcon;
@@ -144,6 +157,7 @@ bool UBuildingMenuWidget::UpdateSegments()
 		NextPageSegment->IconColor = PageIconsColor;
 
 		MenuSegments.Insert(NextPageSegment, MaxSegmentCount / 2);
+		NextPageSegment->OnClicked.AddDynamic(this, &UBuildingMenuWidget::NextPageClicked);
 	}
 
 	for (int i = 0; i < MenuSegments.Num(); i++)
@@ -153,13 +167,16 @@ bool UBuildingMenuWidget::UpdateSegments()
 		canvasPanelSlot->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
 		canvasPanelSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 		canvasPanelSlot->SetAutoSize(true);
+
 		MenuSegments[i]->SetRenderScale(FVector2D(0.75f, 0.75f));
+		MenuSegments[i]->OnSelected.AddDynamic(this, &UBuildingMenuWidget::SegmentSelected);
+		MenuSegments[i]->OnClicked.AddDynamic(this, &UBuildingMenuWidget::SegmentClicked);
 	}
 
 	return true;
 }
 
-void UBuildingMenuWidget::CorrectPageDetails(TArray<FDataTableRowHandle> InBuildingObjects, TArray<FDataTableRowHandle> OutBuildingObjects, bool OutAddNextPage, bool OutAddPrevPage)
+void UBuildingMenuWidget::CorrectPageDetails(TArray<FDataTableRowHandle> InBuildingObjects, TArray<FDataTableRowHandle> &OutBuildingObjects)
 {
 	TArray<FDataTableRowHandle> buildingObjects = InBuildingObjects;
 	TArray<FDataTableRowHandle> resultBuildingObjects;
@@ -215,7 +232,74 @@ void UBuildingMenuWidget::CorrectPageDetails(TArray<FDataTableRowHandle> InBuild
 	}
 
 	OutBuildingObjects = resultBuildingObjects;
-	OutAddNextPage = addNextPage;
-	OutAddPrevPage = addPrevPage;
+	AddNextPage = addNextPage;
+	AddPrevPage = addPrevPage;
 	return;
+}
+
+void UBuildingMenuWidget::UpdateMouseRotation()
+{
+	FVector2D viewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+	FVector viewportVector = UKismetMathLibrary::MakeVector(viewportSize.X / 2, viewportSize.Y / 2, 0.f);
+
+	float locationX;
+	float locationY;
+	GetOwningPlayer()->GetMousePosition(locationX, locationY);
+	FVector mousePosition = UKismetMathLibrary::MakeVector(locationX, locationY, 0.f);
+
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(viewportVector, mousePosition);
+	Rotation = rotation.Yaw > 0.f ? rotation.Yaw - 180.f : rotation.Yaw + 180.f;
+
+	FVector distanceVector = viewportVector - mousePosition;
+	Distance = distanceVector.Size();
+}
+
+void UBuildingMenuWidget::OnClicked()
+{
+	for (int i = 0; i < MenuSegments.Num(); i++)
+		MenuSegments[i]->TryClick();
+}
+
+void UBuildingMenuWidget::SegmentSelected(class UMenuSegmentWidget* InMenuSegmentWidget)
+{
+	UBuildingMenuSegmentWidget* buildingMenuSegment = Cast<UBuildingMenuSegmentWidget>(InMenuSegmentWidget);
+
+	if (!!buildingMenuSegment)
+	{
+		if (OnBuildingSegmentSelected.IsBound())
+			OnBuildingSegmentSelected.Broadcast(buildingMenuSegment);
+	}
+	else
+	{
+		if (OnMenuSegmentSelected.IsBound())
+			OnMenuSegmentSelected.Broadcast(InMenuSegmentWidget);
+	}
+}
+
+void UBuildingMenuWidget::SegmentClicked(class UMenuSegmentWidget* InMenuSegmentWidget)
+{
+	UBuildingMenuSegmentWidget* buildingMenuSegment = Cast<UBuildingMenuSegmentWidget>(InMenuSegmentWidget);
+
+	if (!!buildingMenuSegment)
+	{
+		if (OnBuildingSegmentClicked.IsBound())
+			OnBuildingSegmentClicked.Broadcast(buildingMenuSegment);
+	}
+	else
+	{
+		if (OnMenuSegmentClicked.IsBound())
+			OnMenuSegmentClicked.Broadcast(InMenuSegmentWidget);
+	}
+}
+
+void UBuildingMenuWidget::PrevPageClicked(UMenuSegmentWidget* InMenuSegmentWidget)
+{
+	CurrentPage = FMath::Clamp(CurrentPage - 1, 1, Pages);
+	UpdateSegments();
+}
+
+void UBuildingMenuWidget::NextPageClicked(UMenuSegmentWidget* InMenuSegmentWidget)
+{
+	CurrentPage = FMath::Clamp(CurrentPage + 1, 1, Pages);
+	UpdateSegments();
 }

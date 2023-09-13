@@ -88,7 +88,7 @@ ABuildingFoundation::ABuildingFoundation()
 
 	// Set Mesh
 	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Foundation.SM_Stylized_Wood_Foundation'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Foundaton.SM_Stylized_Stone_Foundaton'");
+	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Foundation.SM_Stylized_Stone_Foundation'");
 	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Foundation.SM_Stylized_Metal_Foundation'");
 	Mesh->SetStaticMesh(MeshWood);
 
