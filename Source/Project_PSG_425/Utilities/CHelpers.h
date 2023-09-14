@@ -68,4 +68,5 @@ public:
 	{
 		*OutComp = InActor->CreateDefaultSubobject<T>(InName);
 	}
+
 };

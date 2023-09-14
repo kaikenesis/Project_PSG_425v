@@ -1,6 +1,8 @@
 #include "HUDWidget.h"
 #include "Global.h"
 #include "BuildingMenuWidget.h"
+#include "BuildingMenuSegmentWidget.h"
+#include "Game/CraftRPGPlayerController.h"
 
 void UHUDWidget::NativeConstruct()
 {
@@ -47,4 +49,5 @@ void UHUDWidget::HideBuildingMenu_Interface()
 void UHUDWidget::OnBuildingSegmentClicked(UBuildingMenuSegmentWidget* InBuildingMenuSegmentWidget)
 {
 	HideBuildingMenu();
+	Cast<ACraftRPGPlayerController>(GetOwningPlayer())->TryStartBuildObject_Interface(InBuildingMenuSegmentWidget->BuildingObjectHandle);
 }

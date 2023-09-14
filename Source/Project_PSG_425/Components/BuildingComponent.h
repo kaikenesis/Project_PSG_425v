@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BuildingObject/BaseBuildingObject.h"
+#include "Engine/DataTable.h"
 #include "BuildingComponent.generated.h"
 
 
@@ -23,7 +24,6 @@ public:
 public:
 	void BuildTraceResult(FHitResult& OutHitResult);
 	void CheckDistance(FVector InHitLocation, ABaseBuildingObject* InHitActor);
-	void CheckSpawn();
 	void Spawn();
 
 	void GetBuildTransform(ABaseBuildingObject* InHitActor, TArray<USceneComponent*>& OutComps);
@@ -33,12 +33,17 @@ public:
 	void ShowBuildingMenu(bool Success = false);
 	void HideBuildingMenu(bool Success = false);
 
+	void TryStartBuildObject(FDataTableRowHandle InBuildingObjectHandle);
+	bool CheckBuildRequirements(FDataTableRowHandle InBuildingObjectHandle);
+	void StartBuildObject(FDataTableRowHandle InBuildingObjectHandle);
+
+	void DestroyBuildingObject();
+
 private:
 	class APlayerController* OwnerPlayerController;
 
-	class ABaseBuildingObject* BuildMesh;
+	class ABaseBuildingObject* BuildingObject;
 	class ABaseBuildingObject* NewHitActor;
-	TSubclassOf<class ABaseBuildingObject> BuildMeshClass;
 
 	TArray<FTransform> SocketTransform;
 	FTransform SpawnTransform;
@@ -49,4 +54,8 @@ private:
 	class UUserWidget* BuildingWidget;
 
 	bool bInRange = false;
+
+	TSubclassOf<class ABaseBuildingObject> LastBuildingObjectClass;
+	FDataTableRowHandle LastBuildingObjectHandle;
+	FTransform BuildTransform;
 };

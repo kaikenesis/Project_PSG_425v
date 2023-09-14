@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Interface/IPlayer.h"
 #include "CraftRPGPlayerController.generated.h"
 
 UCLASS()
-class PROJECT_PSG_425_API ACraftRPGPlayerController : public APlayerController
+class PROJECT_PSG_425_API ACraftRPGPlayerController : public APlayerController, public IIPlayer
 {
 	GENERATED_BODY()
 	
@@ -16,6 +17,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupInputComponent() override;
+
+public:
+	virtual void TryStartBuildObject_Interface(FDataTableRowHandle InBuildingObjectHandle) override;
 
 private:
 	void TryBuild();

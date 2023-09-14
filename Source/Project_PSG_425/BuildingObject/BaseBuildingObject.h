@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/DataTable.h"
 #include "BaseBuildingObject.generated.h"
 
 enum EBuildType
@@ -44,6 +45,11 @@ public:
 		virtual void OnEndOverlap(AActor* OverlapActor, AActor* OtherActor);
 
 public:
+	FORCEINLINE UStaticMeshComponent* GetMesh() { return Mesh; }
+	FORCEINLINE void TryBuildMode() { IsBuilded = false; }
+	FORCEINLINE void FinishBuildMode() { IsBuilded = true; }
+	FORCEINLINE bool IsCanBuild() { return bCanBuild; }
+	
 	void SetMaterialCanBuild();
 	void SetMaterialCanNotBuild();
 
@@ -61,13 +67,16 @@ private:
 	class UMaterialInterface* CanBuildMaterialInterface;
 	class UMaterialInterface* CanNotBuildMaterialInterface;
 
+	bool IsBuilded = true;
+	bool bCanBuild = true;
+
 public:
 	EBuildType BuildType;
 	EMeshType MeshType;
 
 	TArray<AActor*> OverlapActors;
-	bool IsBuilded = true;
-	bool bCanBuild = true;
+
+	FDataTableRowHandle BuildingObjectHandle;
 
 protected:
 	UStaticMesh* MeshWood;

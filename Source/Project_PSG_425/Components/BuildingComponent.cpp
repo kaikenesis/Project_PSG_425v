@@ -10,12 +10,13 @@
 #include "BuildingObject/Modular/BuildingWall.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Widgets/HUDWidget.h"
+#include "Interface/IPlayer.h"
+#include "DataTable/CustomDataTables.h"
 
 UBuildingComponent::UBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	CHelpers::GetClass(&BuildMeshClass, "Class'/Script/Project_PSG_425.BuildingCeiling'");
 	CHelpers::GetClass(&BuildingWidgetClass, "/Game/Widgets/WB_HUD");
 }
 
@@ -36,7 +37,7 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!!BuildMesh)
+	if (!!BuildingObject)
 	{
 		FHitResult hitResult;
 		BuildTraceResult(hitResult);
@@ -53,13 +54,13 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 				SocketTransform.Empty();
 			}
 
-			FRotator rotation = FRotator(BuildMesh->GetActorRotation().Pitch ,OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildMesh->GetActorRotation().Roll);
+			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch ,OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
 			SpawnTransform = UKismetMathLibrary::MakeTransform(hitResult.Location, rotation, FVector(1.f, 1.f, 1.05f));
 		}
 		
 		bInRange = hitResult.bBlockingHit;
 		if(bInRange)
-			BuildMesh->SetActorTransform(SpawnTransform);
+			BuildingObject->SetActorTransform(SpawnTransform);
 	}
 }
 
@@ -75,7 +76,7 @@ void UBuildingComponent::BuildTraceResult(FHitResult& OutHitResult)
 	end = wolrdLocation + (worldDirection * 1000);
 
 	TArray<AActor*> ignoreActor;
-	ignoreActor.Add(BuildMesh);
+	ignoreActor.Add(BuildingObject);
 	ignoreActor.Add(UGameplayStatics::GetPlayerCharacter(this, 0));
 	ignoreActor.Add(OwnerPlayerController->PlayerCameraManager);
 	
@@ -105,7 +106,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 		if (ceilingSockets.Num() < 1) // ceilingSockets배열이 null일때
 		{
-			FRotator rotation = FRotator(BuildMesh->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildMesh->GetActorRotation().Roll);
+			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
 			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
 			return;
 		}
@@ -126,7 +127,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 		if (ceilingSockets.Num() < 1) // ceilingSockets배열이 null일때
 		{
-			FRotator rotation = FRotator(BuildMesh->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildMesh->GetActorRotation().Roll);
+			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
 			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
 			return;
 		}
@@ -143,7 +144,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 	if (SocketTransform.Num() < 1) // SocketTransform배열이 null일때
 	{
-		FRotator rotation = FRotator(BuildMesh->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildMesh->GetActorRotation().Roll);
+		FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
 		SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
 		return;
 	}
@@ -165,30 +166,16 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 	SpawnTransform = UKismetMathLibrary::MakeTransform(SocketTransform[index].GetLocation(), SocketTransform[index].GetRotation().Rotator(), FVector(1.f, 1.f, 1.05f));
 }
 
-void UBuildingComponent::CheckSpawn()
-{
-	if (!!BuildMeshClass && !BuildMesh)
-	{
-		FTransform transform;
-
-		BuildMesh = GetWorld()->SpawnActor<ABaseBuildingObject>(BuildMeshClass, transform);
-		BuildMesh->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		BuildMesh->SetMaterialCanBuild();
-
-		BuildMesh->IsBuilded = false;
-	}
-}
-
 void UBuildingComponent::Spawn()
 {
-	if (!!BuildMesh)
+	if (!!BuildingObject)
 	{
-		if (BuildMesh->bCanBuild && bInRange)
+		if (BuildingObject->IsCanBuild() && bInRange)
 		{
 			FTransform transform;
 			transform = UKismetMathLibrary::MakeTransform(SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), FVector(1.f, 1.f, 1.f));
 
-			GetWorld()->SpawnActor<ABaseBuildingObject>(BuildMesh->GetClass(), transform);
+			GetWorld()->SpawnActor<ABaseBuildingObject>(BuildingObject->GetClass(), transform);
 		}
 		else
 			CLog::Print("Can not Spawn");
@@ -203,25 +190,25 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingCeiling* actor = Cast<ABuildingCeiling>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Ceiling)
+			if (BuildingObject->BuildType == EBuildType::Ceiling)
 			{
 				if (!!actor->CeilingSockets)
 					actor->CeilingSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::CeilingTriangle)
+			else if (BuildingObject->BuildType == EBuildType::CeilingTriangle)
 			{
 				if (!!actor->CeilingTriangleSockets)
 					actor->CeilingTriangleSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Wall)
+			else if (BuildingObject->BuildType == EBuildType::Wall)
 			{
 				if (!!actor->WallSockets)
 					actor->WallSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Roof) // roofsocket 하나라서 나중에 수정필요함
+			else if (BuildingObject->BuildType == EBuildType::Roof) // roofsocket 하나라서 나중에 수정필요함
 			{
 				if (!!actor->RoofSocket)
 					actor->RoofSocket->GetChildrenComponents(false, OutComps);
@@ -235,19 +222,19 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingCeilingTriangle* actor = Cast<ABuildingCeilingTriangle>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Ceiling)
+			if (BuildingObject->BuildType == EBuildType::Ceiling)
 			{
 				if (!!actor->CeilingSockets)
 					actor->CeilingSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::CeilingTriangle)
+			else if (BuildingObject->BuildType == EBuildType::CeilingTriangle)
 			{
 				if (!!actor->CeilingTriangleSockets)
 					actor->CeilingTriangleSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Wall)
+			else if (BuildingObject->BuildType == EBuildType::Wall)
 			{
 				if (!!actor->WallSockets)
 					actor->WallSockets->GetChildrenComponents(false, OutComps);
@@ -260,25 +247,25 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingFoundation* actor = Cast<ABuildingFoundation>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Foundation)
+			if (BuildingObject->BuildType == EBuildType::Foundation)
 			{
 				if (!!actor->FoundationSockets)
 					actor->FoundationSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::FoundationTriangle)
+			else if (BuildingObject->BuildType == EBuildType::FoundationTriangle)
 			{
 				if (!!actor->FoundationTriangleSockets)
 					actor->FoundationTriangleSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Wall)
+			else if (BuildingObject->BuildType == EBuildType::Wall)
 			{
 				if (!!actor->WallSockets)
 					actor->WallSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Ramp)
+			else if (BuildingObject->BuildType == EBuildType::Ramp)
 			{
 				if (!!actor->RampSockets)
 					actor->RampSockets->GetChildrenComponents(false, OutComps);
@@ -291,25 +278,25 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingFoundationTriangle* actor = Cast<ABuildingFoundationTriangle>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Foundation)
+			if (BuildingObject->BuildType == EBuildType::Foundation)
 			{
 				if (!!actor->FoundationSockets)
 					actor->FoundationSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::FoundationTriangle)
+			else if (BuildingObject->BuildType == EBuildType::FoundationTriangle)
 			{
 				if (!!actor->FoundationTriangleSockets)
 					actor->FoundationTriangleSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Wall)
+			else if (BuildingObject->BuildType == EBuildType::Wall)
 			{
 				if (!!actor->WallSockets)
 					actor->WallSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Ramp)
+			else if (BuildingObject->BuildType == EBuildType::Ramp)
 			{
 				if (!!actor->RampSockets)
 					actor->RampSockets->GetChildrenComponents(false, OutComps);
@@ -322,19 +309,19 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingRoof* actor = Cast<ABuildingRoof>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Roof)
+			if (BuildingObject->BuildType == EBuildType::Roof)
 			{
 				if (!!actor->RoofSockets)
 					actor->RoofSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::RoofWall)
+			else if (BuildingObject->BuildType == EBuildType::RoofWall)
 			{
 				if (!!actor->RoofWallSockets)
 					actor->RoofWallSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Ceiling)
+			else if (BuildingObject->BuildType == EBuildType::Ceiling)
 			{
 				if (!!actor->CeilingSockets)
 					actor->CeilingSockets->GetChildrenComponents(false, OutComps);
@@ -347,25 +334,25 @@ void UBuildingComponent::GetBuildTransform(ABaseBuildingObject* InHitActor, TArr
 		{
 			ABuildingWall* actor = Cast<ABuildingWall>(NewHitActor);
 
-			if (BuildMesh->BuildType == EBuildType::Ceiling)
+			if (BuildingObject->BuildType == EBuildType::Ceiling)
 			{
 				if (!!actor->CeilingSockets)
 					actor->CeilingSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::CeilingTriangle)
+			else if (BuildingObject->BuildType == EBuildType::CeilingTriangle)
 			{
 				if (!!actor->CeilingTriangleSockets)
 					actor->CeilingTriangleSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Wall)
+			else if (BuildingObject->BuildType == EBuildType::Wall)
 			{
 				if (!!actor->WallSockets)
 					actor->WallSockets->GetChildrenComponents(false, OutComps);
 				break;
 			}
-			else if (BuildMesh->BuildType == EBuildType::Roof)
+			else if (BuildingObject->BuildType == EBuildType::Roof)
 			{
 				if (!!actor->RoofSockets)
 					actor->RoofSockets->GetChildrenComponents(false, OutComps);
@@ -415,5 +402,73 @@ void UBuildingComponent::HideBuildingMenu(bool Success)
 
 	CheckNull(hudWidget)
 		hudWidget->HideBuildingMenu_Interface();
+}
+
+void UBuildingComponent::TryStartBuildObject(FDataTableRowHandle InBuildingObjectHandle)
+{
+	//CheckBuildRequirements(InBuildingObjectHandle); -> 자원추가할때 쓰는 함수
+	StartBuildObject(InBuildingObjectHandle);
+}
+
+bool UBuildingComponent::CheckBuildRequirements(FDataTableRowHandle InBuildingObjectHandle)
+{
+	TSubclassOf<UIPlayer> iPlayerClass;
+	if (UKismetSystemLibrary::DoesImplementInterface(OwnerPlayerController, iPlayerClass))
+	{
+		if (!!InBuildingObjectHandle.DataTable)
+		{
+			if (!!InBuildingObjectHandle.DataTable->FindRow<FBuildingObjectSettings>(InBuildingObjectHandle.RowName, ""))
+				return true;
+			else
+				return false;
+		}
+	}
+	return true;
+}
+
+void UBuildingComponent::StartBuildObject(FDataTableRowHandle InBuildingObjectHandle)
+{
+	CLog::Print("UBuildingComponent->StartBuildObject()");
+
+	bool result;
+
+	if (!!InBuildingObjectHandle.DataTable)
+		result = InBuildingObjectHandle.RowName != FName("None");
+	else
+		result = false;
+
+	if (result == true)
+	{
+		FBuildingObjectSettings* buildingObjectHandle = InBuildingObjectHandle.DataTable->FindRow<FBuildingObjectSettings>(InBuildingObjectHandle.RowName, "");
+		if (!!buildingObjectHandle)
+		{
+			//ChangeBuildingMode(Enum);
+
+			LastBuildingObjectHandle = buildingObjectHandle->Handle;
+			LastBuildingObjectClass = buildingObjectHandle->Class;
+
+			DestroyBuildingObject();
+
+			FTransform transform;
+			BuildingObject = GetWorld()->SpawnActor<ABaseBuildingObject>(LastBuildingObjectClass, transform);
+			BuildingObject->BuildingObjectHandle = LastBuildingObjectHandle;
+			BuildingObject->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			BuildingObject->SetMaterialCanBuild();
+			BuildingObject->TryBuildMode();
+
+			BuildTransform.SetLocation(FVector(0.f, 0.f, 0.f));
+			BuildTransform.SetRotation(FQuat(FRotator(0.f, 0.f, 0.f)));
+			BuildTransform.SetScale3D(FVector(1.f, 1.f, 1.f));
+		}
+	}
+}
+
+void UBuildingComponent::DestroyBuildingObject()
+{
+	if (!!BuildingObject)
+	{
+		BuildingObject->Destroy();
+		BuildingObject = nullptr;
+	}
 }
 
