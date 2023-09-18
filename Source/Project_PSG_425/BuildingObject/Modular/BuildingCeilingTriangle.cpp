@@ -90,12 +90,6 @@ ABuildingCeilingTriangle::ABuildingCeilingTriangle()
 
 	WallSocket6->SetRelativeLocation(FVector(0.f, 86.6f, -150.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Triangle_Ceiling.SM_Stylized_Wood_Triangle_Ceiling'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Tri_Ceiling.SM_Stylized_Stone_Tri_Ceiling'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Tri_Ceiling.SM_Stylized_Metal_Tri_Ceiling'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType
 	BuildType = EBuildType::CeilingTriangle;
 }

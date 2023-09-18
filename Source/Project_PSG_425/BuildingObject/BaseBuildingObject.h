@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DataTable/CustomDataTables.h"
 #include "Engine/DataTable.h"
 #include "BaseBuildingObject.generated.h"
 
@@ -39,22 +40,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-		virtual void OnBeginOverlap(AActor* OverlapActor, AActor* OtherActor);
+		virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		virtual void OnEndOverlap(AActor* OverlapActor, AActor* OtherActor);
+		virtual void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
 	FORCEINLINE UStaticMeshComponent* GetMesh() { return Mesh; }
 	FORCEINLINE void TryBuildMode() { IsBuilded = false; }
 	FORCEINLINE void FinishBuildMode() { IsBuilded = true; }
 	FORCEINLINE bool IsCanBuild() { return bCanBuild; }
+	FORCEINLINE bool IsOverlappedObject() { return OverlapActors.Num() > 0; }
 	
-	void SetMaterialCanBuild();
-	void SetMaterialCanNotBuild();
+	void SetCanBuild();
+	void SetCanNotBuild();
 
-	void SetBuildType(EBuildType Type);
-	virtual void SetMeshType(EMeshType Type);
+private:
+	void SetCanBeBuilt(bool InCanBeBuilt);
+	void InitOverlapSettings();
 
 public:
 	UPROPERTY(EditDefaultsOnly)
@@ -70,16 +73,15 @@ private:
 	bool IsBuilded = true;
 	bool bCanBuild = true;
 
+	TArray<class AActor*> OverlapActors;
+
 public:
 	EBuildType BuildType;
 	EMeshType MeshType;
 
-	TArray<AActor*> OverlapActors;
-
 	FDataTableRowHandle BuildingObjectHandle;
 
-protected:
-	UStaticMesh* MeshWood;
-	UStaticMesh* MeshStone;
-	UStaticMesh* MeshMetal;
+private:
+	FBuildingObjectSettings* BuildingObjectSettings;
+
 };

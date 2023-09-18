@@ -22,7 +22,7 @@ public:
 	virtual void TryStartBuildObject_Interface(FDataTableRowHandle InBuildingObjectHandle) override;
 
 private:
-	void TryBuild();
+	void TryBuild(FDataTableRowHandle InBuildingObjectHandle);
 	void FinishBuild();
 	void ShowBuildingMenu();
 	void HideBuildingMenu();

@@ -46,12 +46,6 @@ ABuildingRoof::ABuildingRoof()
 	RoofWallSocketLeft->SetRelativeLocation(FVector(0.f, -150.f, 0.f));
 	RoofWallSocketRight->SetRelativeLocation(FVector(0.f, 150.f, 0.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Roof.SM_Stylized_Wood_Roof'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Roof.SM_Stylized_Stone_Roof'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Roof.SM_Stylized_Metal_Roof'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType
 	BuildType = EBuildType::Roof;
 }

@@ -93,12 +93,6 @@ ABuildingFoundationTriangle::ABuildingFoundationTriangle()
 
 	RampSocket3->SetRelativeLocation(FVector(0.f, 236.6f, 0.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Triangle_Foundation.SM_Stylized_Wood_Triangle_Foundation'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Tri_Foundation.SM_Stylized_Stone_Tri_Foundation'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Tri_Foundation.SM_Stylized_Metal_Tri_Foundation'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType
 	BuildType = EBuildType::FoundationTriangle;
 }

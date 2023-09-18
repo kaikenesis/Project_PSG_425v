@@ -1,6 +1,7 @@
 #include "BaseBuildingObject.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
+#include "Components/BoxComponent.h"
 #include "Modular/BuildingCeiling.h"
 #include "Modular/BuildingCeilingTriangle.h"
 #include "Modular/BuildingDoorFrame.h"
@@ -19,14 +20,30 @@ ABaseBuildingObject::ABaseBuildingObject()
 
 	CHelpers::GetAsset(&CanBuildMaterialInterface, "MaterialInstanceConstant'/Game/Materials/Instance/Dummy/MI_Can_Build.MI_Can_Build'");
 	CHelpers::GetAsset(&CanNotBuildMaterialInterface, "MaterialInstanceConstant'/Game/Materials/Instance/Dummy/MI_CanNot_Build.MI_CanNot_Build'");
+
 }
 
 void ABaseBuildingObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OnActorBeginOverlap.AddDynamic(this, &ABaseBuildingObject::OnBeginOverlap);
-	OnActorEndOverlap.AddDynamic(this, &ABaseBuildingObject::OnEndOverlap);
+	InitOverlapSettings();
+
+	if (!!BuildingObjectHandle.DataTable)
+		BuildingObjectSettings = BuildingObjectHandle.DataTable->FindRow<FBuildingObjectSettings>(BuildingObjectHandle.RowName, "");
+
+	if (!!BuildingObjectSettings->StaticMesh)
+		Mesh->SetStaticMesh(BuildingObjectSettings->StaticMesh);
+
+	FTransform transform;
+	FVector location = FVector(0.f, 0.f, 0.f);
+	FRotator rotation = FRotator(0.f, 0.f, 0.f);
+	FVector scale = FVector(1.f, 1.f, 1.f);
+
+	transform = UKismetMathLibrary::MakeTransform(location, rotation, scale);
+
+	if (BuildingObjectSettings->CorrectMeshTransform.Equals(transform) == false)
+		Mesh->SetRelativeTransform(BuildingObjectSettings->CorrectMeshTransform);
 }
 
 void ABaseBuildingObject::Tick(float DeltaTime)
@@ -35,124 +52,86 @@ void ABaseBuildingObject::Tick(float DeltaTime)
 
 }
 
-void ABaseBuildingObject::OnBeginOverlap(AActor* OverlapActor, AActor* OtherActor)
+void ABaseBuildingObject::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsBuilded == false)
 	{
-		if (Cast<ABaseBuildingObject>(OverlapActor) || Cast<ACharacter>(OverlapActor))
-			OverlapActors.Add(OverlapActor);
+		ABaseBuildingObject* otherBuildObject = Cast<ABaseBuildingObject>(OtherActor);
+		if (!!otherBuildObject)
+		{
+			UBoxComponent* boxComp = Cast<UBoxComponent>(OtherComp);
+			if(!!boxComp)
+				OverlapActors.Add(OtherActor);
+		}
+
+		if (Cast<ACharacter>(OtherActor))
+			OverlapActors.Add(OtherActor);
 
 		if (OverlapActors.Num() > 0)
-			SetMaterialCanNotBuild();
+			SetCanBeBuilt(false);
 
-		CLog::Print(OverlapActors.Num());
-	}		
+		CLog::Print("OverlapActor : " + OverlapActors.Num());
+	}
 }
 
-void ABaseBuildingObject::OnEndOverlap(AActor* OverlapActor, AActor* OtherActor)
+void ABaseBuildingObject::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (IsBuilded == false)
 	{
-		if (Cast<ABaseBuildingObject>(OverlapActor) || Cast<ACharacter>(OverlapActor))
-			if(OverlapActors.Contains(OverlapActor))
-				OverlapActors.RemoveSingle(OverlapActor);
+		ABaseBuildingObject* otherBuildObject = Cast<ABaseBuildingObject>(OtherActor);
+		if (!!otherBuildObject)
+		{
+			UBoxComponent* boxComp = Cast<UBoxComponent>(OtherComp);
+			if (!!boxComp)
+				if (OverlapActors.Contains(OtherActor))
+					OverlapActors.RemoveSingle(OtherActor);
+		}
+
+
+		if (Cast<ACharacter>(OtherActor))
+			if (OverlapActors.Contains(OtherActor))
+				OverlapActors.RemoveSingle(OtherActor);
 
 		if (OverlapActors.Num() < 1)
-			SetMaterialCanBuild();
+			SetCanBeBuilt(true);
 
-		CLog::Print(OverlapActors.Num());
+		CLog::Print("OverlapActor : " + OverlapActors.Num());
 	}
 }
 
-void ABaseBuildingObject::SetMaterialCanBuild()
+void ABaseBuildingObject::SetCanBuild()
 {
-	Mesh->SetMaterial(0, CanBuildMaterialInterface);
-	bCanBuild = true;
+	SetCanBeBuilt(true);
 }
 
-void ABaseBuildingObject::SetMaterialCanNotBuild()
+void ABaseBuildingObject::SetCanNotBuild()
 {
-	Mesh->SetMaterial(0, CanNotBuildMaterialInterface);
-	bCanBuild = false;
+	SetCanBeBuilt(false);
 }
 
-void ABaseBuildingObject::SetBuildType(EBuildType Type)
+void ABaseBuildingObject::SetCanBeBuilt(bool InCanBeBuilt)
 {
-	switch (BuildType)
-	{
-		case Ceiling:
-		{
-			ABuildingCeiling* actor = Cast<ABuildingCeiling>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case CeilingTriangle:
-		{
-			ABuildingCeilingTriangle* actor = Cast<ABuildingCeilingTriangle>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case Foundation:
-		{
-			ABuildingFoundation* actor = Cast<ABuildingFoundation>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case FoundationTriangle:
-		{
-			ABuildingFoundationTriangle* actor = Cast<ABuildingFoundationTriangle>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case Roof:
-		{
-			ABuildingRoof* actor = Cast<ABuildingRoof>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case RoofWall:
-		{
-			break;
-		}
-		case Wall:
-		{
-			ABuildingWall* actor = Cast<ABuildingWall>(this);
-			Mesh = actor->Mesh;
-			break;
-		}
-		case Ramp:
-		{
-			break;
-		}
-		default:
-			break;
-	}
+	bCanBuild = InCanBeBuilt;
+
+	if(bCanBuild == true)
+		Mesh->SetMaterial(0, CanBuildMaterialInterface);
+	else
+		Mesh->SetMaterial(0, CanNotBuildMaterialInterface);
 }
 
-void ABaseBuildingObject::SetMeshType(EMeshType Type)
+void ABaseBuildingObject::InitOverlapSettings()
 {
-	switch (MeshType)
+	TArray<USceneComponent*> childComps;
+	Mesh->GetChildrenComponents(true, childComps);
+
+	for (const auto& childComp : childComps)
 	{
-	case Wood:
-	{
-		this->MeshType = EMeshType::Wood;
-		Mesh->SetStaticMesh(MeshWood);
-		break;
-	}
-	case Stone:
-	{
-		this->MeshType = EMeshType::Stone;
-		Mesh->SetStaticMesh(MeshStone);
-		break;
-	}
-	case Metal:
-	{
-		this->MeshType = EMeshType::Metal;
-		Mesh->SetStaticMesh(MeshMetal);
-		break;
-	}
-	default:
-		break;
+		UBoxComponent* boxComp = Cast<UBoxComponent>(childComp);
+
+		if (!!boxComp)
+		{
+			boxComp->OnComponentBeginOverlap.AddDynamic(this, &ABaseBuildingObject::OnComponentBeginOverlap);
+			boxComp->OnComponentEndOverlap.AddDynamic(this, &ABaseBuildingObject::OnComponentEndOverlap);
+		}
 	}
 }
-

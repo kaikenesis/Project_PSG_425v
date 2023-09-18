@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BuildingObject/BaseBuildingObject.h"
 #include "Engine/DataTable.h"
 #include "BuildingComponent.generated.h"
 
@@ -23,10 +22,9 @@ public:
 
 public:
 	void BuildTraceResult(FHitResult& OutHitResult);
-	void CheckDistance(FVector InHitLocation, ABaseBuildingObject* InHitActor);
-	void Spawn();
+	void CheckDistance(FVector InHitLocation, class ABaseBuildingObject* InHitActor);
 
-	void GetBuildTransform(ABaseBuildingObject* InHitActor, TArray<USceneComponent*>& OutComps);
+	void GetBuildTransform(class ABaseBuildingObject* InHitActor, TArray<class USceneComponent*>& OutComps);
 
 	void TrytoCreateBuildingWidget();
 
@@ -36,8 +34,13 @@ public:
 	void TryStartBuildObject(FDataTableRowHandle InBuildingObjectHandle);
 	bool CheckBuildRequirements(FDataTableRowHandle InBuildingObjectHandle);
 	void StartBuildObject(FDataTableRowHandle InBuildingObjectHandle);
+	void FinishBuildObject();
 
 	void DestroyBuildingObject();
+
+public:
+	bool bTraceToMouseMode = false;
+	float TraceDistance = 1000.f;
 
 private:
 	class APlayerController* OwnerPlayerController;
@@ -47,13 +50,12 @@ private:
 
 	TArray<FTransform> SocketTransform;
 	FTransform SpawnTransform;
+	FRotator BuildingObjectRotation;
 
-	TArray<AActor*> OverlapActors;
+	TArray<class AActor*> OverlapActors;
 
 	TSubclassOf<class UUserWidget> BuildingWidgetClass;
 	class UUserWidget* BuildingWidget;
-
-	bool bInRange = false;
 
 	TSubclassOf<class ABaseBuildingObject> LastBuildingObjectClass;
 	FDataTableRowHandle LastBuildingObjectHandle;

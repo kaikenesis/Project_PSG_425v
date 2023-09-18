@@ -86,12 +86,6 @@ ABuildingFoundation::ABuildingFoundation()
 	StairsSocket->SetRelativeLocation(FVector(0.f, 0.f, 245.f));
 	RoofSocket->SetRelativeLocation(FVector(0.f, 0.f, 235.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Foundation.SM_Stylized_Wood_Foundation'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Foundation.SM_Stylized_Stone_Foundation'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Foundation.SM_Stylized_Metal_Foundation'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType
 	BuildType = EBuildType::Foundation;
 }

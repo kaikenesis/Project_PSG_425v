@@ -83,12 +83,6 @@ ABuildingCeiling::ABuildingCeiling()
 	StairsSocket->SetRelativeLocation(FVector(0.f, 0.f, 160.f));
 	RoofSocket->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Ceiling.SM_Stylized_Wood_Ceiling'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Ceiling.SM_Stylized_Stone_Ceiling'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Ceiling.SM_Stylized_Metal_Ceiling'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType
 	BuildType = EBuildType::Ceiling;
 }

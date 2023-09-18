@@ -25,17 +25,16 @@ void ACraftRPGPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::Q, IE_Released, this, &ACraftRPGPlayerController::HideBuildingMenu);
 }
 
-void ACraftRPGPlayerController::TryBuild()
+void ACraftRPGPlayerController::TryBuild(FDataTableRowHandle InBuildingObjectHandle)
 {
-	//if(!!BuildingComponent)
-	//	BuildingComponent->CheckSpawn();
-	//->StartBuildObject()로 변경 및 playercontroller에서 호출
+	if(!!BuildingComponent)
+		BuildingComponent->TryStartBuildObject(InBuildingObjectHandle);
 }
 
 void ACraftRPGPlayerController::FinishBuild()
 {
 	if (!!BuildingComponent)
-		BuildingComponent->Spawn();
+		BuildingComponent->FinishBuildObject();
 }
 
 void ACraftRPGPlayerController::ShowBuildingMenu()
@@ -52,6 +51,5 @@ void ACraftRPGPlayerController::HideBuildingMenu()
 
 void ACraftRPGPlayerController::TryStartBuildObject_Interface(FDataTableRowHandle InBuildingObjectHandle)
 {
-	CLog::Print("ACraftRPGPlayerController->TryStartBuildObject_Interface()");
-	BuildingComponent->TryStartBuildObject(InBuildingObjectHandle);
+	TryBuild(InBuildingObjectHandle);
 }

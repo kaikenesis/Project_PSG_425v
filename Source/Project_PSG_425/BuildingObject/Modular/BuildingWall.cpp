@@ -73,12 +73,6 @@ ABuildingWall::ABuildingWall()
 	RoofSocket4->SetRelativeLocation(FVector(0.f, 150.f, 0.f));
 	RoofSocket4->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	// Set Mesh
-	CHelpers::GetAsset(&MeshWood, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Wood/SM_Stylized_Wood_Wall.SM_Stylized_Wood_Wall'");
-	CHelpers::GetAsset(&MeshStone, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Stone/SM_Stylized_Stone_Wall.SM_Stylized_Stone_Wall'");
-	CHelpers::GetAsset(&MeshMetal, "StaticMesh'/Game/BuildingObject/Structures/Meshes/Stylized/Metal/SM_Stylized_Metal_Wall.SM_Stylized_Metal_Wall'");
-	Mesh->SetStaticMesh(MeshWood);
-
 	// Set EBuildType & Init MeshType
 	BuildType = EBuildType::Wall;
 }

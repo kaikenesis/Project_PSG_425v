@@ -2,6 +2,7 @@
 #include "GameFramework/Character.h"
 #include "Global.h"
 #include "Characters/BaseCharacter.h"
+#include "BuildingObject/BaseBuildingObject.h"
 #include "BuildingObject/Modular/BuildingCeiling.h"
 #include "BuildingObject/Modular/BuildingCeilingTriangle.h"
 #include "BuildingObject/Modular/BuildingFoundation.h"
@@ -42,11 +43,18 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		FHitResult hitResult;
 		BuildTraceResult(hitResult);
 
-		if (Cast<ABaseBuildingObject>(hitResult.Actor)) // 다른 건축애셋에 linetrace됐을때
+		ABaseBuildingObject* otherBuildObject = Cast<ABaseBuildingObject>(hitResult.Actor);
+		FVector scale = FVector(1.f, 1.f, 1.05f);
+
+		if (!!otherBuildObject) // 다른 건축애셋에 trace됐을때
 		{
-			CheckDistance(hitResult.Location, Cast<ABaseBuildingObject>(hitResult.Actor));
+			CheckDistance(hitResult.Location, otherBuildObject);
+			
+			if (BuildingObject->IsOverlappedObject() == false)
+				if (BuildingObject->IsCanBuild() == false)
+					BuildingObject->SetCanBuild();
 		}
-		else // 다른 건축애셋에 linetrace되지 않았을때
+		else // 다른 건축애셋에 trace되지 않았지만 hit된 액터가 있을때
 		{
 			if (!!NewHitActor)
 			{
@@ -54,26 +62,50 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 				SocketTransform.Empty();
 			}
 
-			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch ,OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
-			SpawnTransform = UKismetMathLibrary::MakeTransform(hitResult.Location, rotation, FVector(1.f, 1.f, 1.05f));
+			float rotationYaw = OwnerPlayerController->PlayerCameraManager->GetCameraRotation().Yaw;
+			FRotator rotation = BuildingObjectRotation + FRotator(0.f , rotationYaw, 0.f);
+
+			if (hitResult.bBlockingHit == true)
+			{
+				SpawnTransform = UKismetMathLibrary::MakeTransform(hitResult.Location, rotation, scale);
+
+				if(BuildingObject->IsOverlappedObject() == false)
+					if (BuildingObject->IsCanBuild() == false)
+						BuildingObject->SetCanBuild();
+			}
+			else
+			{
+				SpawnTransform = UKismetMathLibrary::MakeTransform(hitResult.TraceEnd, rotation, scale);
+				
+				if(BuildingObject->IsCanBuild() == true)
+					BuildingObject->SetCanNotBuild();
+			}
 		}
-		
-		bInRange = hitResult.bBlockingHit;
-		if(bInRange)
-			BuildingObject->SetActorTransform(SpawnTransform);
+
+		BuildingObject->SetActorTransform(SpawnTransform);
 	}
 }
 
 void UBuildingComponent::BuildTraceResult(FHitResult& OutHitResult)
 {
 	FVector start, end;
-	float LocationX, LocationY;
-	OwnerPlayerController->GetMousePosition(LocationX, LocationY);
-
 	FVector wolrdLocation, worldDirection;
-	OwnerPlayerController->DeprojectScreenPositionToWorld(LocationX, LocationY, wolrdLocation, worldDirection);
-	start = wolrdLocation;
-	end = wolrdLocation + (worldDirection * 1000);
+
+	if (bTraceToMouseMode == true) // 마우스위치에 따라 트레이스
+	{
+		OwnerPlayerController->DeprojectMousePositionToWorld(wolrdLocation, worldDirection);
+		start = wolrdLocation;
+		end = wolrdLocation + (worldDirection * TraceDistance);
+	}
+	else // 스크린 중앙으로 트레이스
+	{
+		FVector location = OwnerPlayerController->PlayerCameraManager->GetCameraLocation();
+		FRotator rotation = OwnerPlayerController->PlayerCameraManager->GetCameraRotation();
+		FVector forwardVector = UKismetMathLibrary::GetForwardVector(rotation);
+
+		start = location;
+		end = location + (forwardVector * TraceDistance);
+	}
 
 	TArray<AActor*> ignoreActor;
 	ignoreActor.Add(BuildingObject);
@@ -97,6 +129,10 @@ void UBuildingComponent::BuildTraceResult(FHitResult& OutHitResult)
 
 void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObject* InHitActor)
 {
+	float rotationYaw = OwnerPlayerController->PlayerCameraManager->GetCameraRotation().Yaw;
+	FRotator rotation = BuildingObjectRotation + FRotator(0.f, rotationYaw, 0.f);
+	FVector scale = FVector(1.f, 1.f, 1.05f);
+
 	if (NewHitActor == nullptr)
 	{
 		NewHitActor = InHitActor;
@@ -106,8 +142,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 		if (ceilingSockets.Num() < 1) // ceilingSockets배열이 null일때
 		{
-			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
-			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
+			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, scale);
 			return;
 		}
 		else
@@ -127,8 +162,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 		if (ceilingSockets.Num() < 1) // ceilingSockets배열이 null일때
 		{
-			FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
-			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
+			SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, scale);
 			return;
 		}
 		else
@@ -144,8 +178,7 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 
 	if (SocketTransform.Num() < 1) // SocketTransform배열이 null일때
 	{
-		FRotator rotation = FRotator(BuildingObject->GetActorRotation().Pitch, OwnerPlayerController->PlayerCameraManager->K2_GetActorRotation().Yaw, BuildingObject->GetActorRotation().Roll);
-		SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, FVector(1.f, 1.f, 1.05f));
+		SpawnTransform = UKismetMathLibrary::MakeTransform(InHitLocation, rotation, scale);
 		return;
 	}
 
@@ -163,19 +196,22 @@ void UBuildingComponent::CheckDistance(FVector InHitLocation, ABaseBuildingObjec
 	}
 
 	// 해당 Socket의 Location 및 Rotation 값 적용
-	SpawnTransform = UKismetMathLibrary::MakeTransform(SocketTransform[index].GetLocation(), SocketTransform[index].GetRotation().Rotator(), FVector(1.f, 1.f, 1.05f));
+	SpawnTransform = UKismetMathLibrary::MakeTransform(SocketTransform[index].GetLocation(), SocketTransform[index].GetRotation().Rotator(), scale);
 }
 
-void UBuildingComponent::Spawn()
+void UBuildingComponent::FinishBuildObject()
 {
 	if (!!BuildingObject)
 	{
-		if (BuildingObject->IsCanBuild() && bInRange)
+		if (BuildingObject->IsCanBuild())
 		{
+			FVector scale = FVector(1.f, 1.f, 1.f);
 			FTransform transform;
-			transform = UKismetMathLibrary::MakeTransform(SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), FVector(1.f, 1.f, 1.f));
+			transform = UKismetMathLibrary::MakeTransform(SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), scale);
 
-			GetWorld()->SpawnActor<ABaseBuildingObject>(BuildingObject->GetClass(), transform);
+			ABaseBuildingObject* buildObject = GetWorld()->SpawnActorDeferred<ABaseBuildingObject>(BuildingObject->GetClass(), transform);
+			buildObject->BuildingObjectHandle = LastBuildingObjectHandle;
+			buildObject->FinishSpawning(transform);
 		}
 		else
 			CLog::Print("Can not Spawn");
@@ -428,8 +464,6 @@ bool UBuildingComponent::CheckBuildRequirements(FDataTableRowHandle InBuildingOb
 
 void UBuildingComponent::StartBuildObject(FDataTableRowHandle InBuildingObjectHandle)
 {
-	CLog::Print("UBuildingComponent->StartBuildObject()");
-
 	bool result;
 
 	if (!!InBuildingObjectHandle.DataTable)
@@ -450,15 +484,25 @@ void UBuildingComponent::StartBuildObject(FDataTableRowHandle InBuildingObjectHa
 			DestroyBuildingObject();
 
 			FTransform transform;
-			BuildingObject = GetWorld()->SpawnActor<ABaseBuildingObject>(LastBuildingObjectClass, transform);
+
+			BuildingObject = GetWorld()->SpawnActorDeferred<ABaseBuildingObject>(LastBuildingObjectClass, transform);
 			BuildingObject->BuildingObjectHandle = LastBuildingObjectHandle;
+			BuildingObject->FinishSpawning(transform);
+
 			BuildingObject->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			BuildingObject->SetMaterialCanBuild();
 			BuildingObject->TryBuildMode();
+			BuildingObject->UpdateOverlaps();
+
+			if (BuildingObject->IsOverlappedObject() == true)
+				BuildingObject->SetCanNotBuild();
+			else
+				BuildingObject->SetCanBuild();
 
 			BuildTransform.SetLocation(FVector(0.f, 0.f, 0.f));
 			BuildTransform.SetRotation(FQuat(FRotator(0.f, 0.f, 0.f)));
 			BuildTransform.SetScale3D(FVector(1.f, 1.f, 1.f));
+
+			BuildingObjectRotation = BuildingObject->GetActorRotation() + FRotator(0.f, 90.f, 0.f);
 		}
 	}
 }

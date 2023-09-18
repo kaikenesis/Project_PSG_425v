@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
-#include "BuildingObject/BaseBuildingObject.h"
 #include "CustomDataTables.generated.h"
 
 USTRUCT(BlueprintType)
