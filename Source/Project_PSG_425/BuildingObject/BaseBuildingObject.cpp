@@ -70,7 +70,7 @@ void ABaseBuildingObject::OnComponentBeginOverlap(UPrimitiveComponent* Overlappe
 		if (OverlapActors.Num() > 0)
 			SetCanBeBuilt(false);
 
-		CLog::Print("OverlapActor : " + OverlapActors.Num());
+		CLog::Print("OverlapActor : " + FString::FromInt(OverlapActors.Num()));
 	}
 }
 
@@ -95,7 +95,7 @@ void ABaseBuildingObject::OnComponentEndOverlap(UPrimitiveComponent* OverlappedC
 		if (OverlapActors.Num() < 1)
 			SetCanBeBuilt(true);
 
-		CLog::Print("OverlapActor : " + OverlapActors.Num());
+		CLog::Print("OverlapActor : " + FString::FromInt(OverlapActors.Num()));
 	}
 }
 

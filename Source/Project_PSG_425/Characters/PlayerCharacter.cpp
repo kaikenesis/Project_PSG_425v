@@ -17,14 +17,14 @@ APlayerCharacter::APlayerCharacter()
 	//Component Settings
 	//<Mesh>
 	USkeletalMesh* skeletalMesh;
-	CHelpers::GetAsset<USkeletalMesh>(&skeletalMesh, "SkeletalMesh'/Game/Characters/Mannequin/Mesh/SK_Mannequin.SK_Mannequin'");
+	CHelpers::GetAsset<USkeletalMesh>(&skeletalMesh, "SkeletalMesh'/Game/Characters/Player/Mesh/Character/SK_Sci_Fi_Character_08_Full_02.SK_Sci_Fi_Character_08_Full_02'");
 	if(!!skeletalMesh)
 		GetMesh()->SetSkeletalMesh(skeletalMesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
 	TSubclassOf<class UPlayerAnimInstance> animClass;
-	CHelpers::GetClass<UPlayerAnimInstance>(&animClass, "AnimBlueprint'/Game/Characters/Mannequin/Animations/ABP_Player.ABP_Player_C'");
+	CHelpers::GetClass<UPlayerAnimInstance>(&animClass, "AnimBlueprint'/Game/Characters/Player/Animations/ABP_Player_Soldier.ABP_Player_Soldier_C'");
 	if(!!animClass)
 		GetMesh()->SetAnimClass(animClass);
 
