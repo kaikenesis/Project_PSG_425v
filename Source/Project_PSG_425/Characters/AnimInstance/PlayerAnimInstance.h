@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Components/ActionComponent.h"
 #include "PlayerAnimInstance.generated.h"
 
 UCLASS()
@@ -13,6 +14,10 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSecnods) override;
 
+private:
+	UFUNCTION()
+		void OnActionTypeChanged(EActionType InPrevType, EActionType InNewType);
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
 		float Speed;
@@ -21,9 +26,9 @@ protected:
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
-		bool IsFalling;
+		bool bIsFalling;
 
-private:
-	class APlayerCharacter* OwnerCharacter;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
+		EActionType ActionType;
 
 };

@@ -1,6 +1,7 @@
 #include "CraftRPGPlayerController.h"
 #include "Global.h"
 #include "InputCoreTypes.h"
+#include "Characters/PlayerCharacter.h"
 #include "Components/BuildingComponent.h"
 
 ACraftRPGPlayerController::ACraftRPGPlayerController()

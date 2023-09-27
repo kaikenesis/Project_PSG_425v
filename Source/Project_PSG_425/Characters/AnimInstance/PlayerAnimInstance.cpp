@@ -1,24 +1,36 @@
 #include "PlayerAnimInstance.h"
 #include "Global.h"
-#include "Characters/PlayerCharacter.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UPlayerAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OwnerCharacter = Cast<APlayerCharacter>(TryGetPawnOwner());
+	APawn* ownerPawn = TryGetPawnOwner();
+	CheckNull(ownerPawn);
+
+	UActionComponent* actionComp = CHelpers::GetComponent<UActionComponent>(ownerPawn);
+	CheckNull(actionComp);
+
+	actionComp->OnActionTypeChanged.AddDynamic(this, &UPlayerAnimInstance::OnActionTypeChanged);
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSecnods)
 {
 	Super::NativeUpdateAnimation(DeltaSecnods);
 
-	CheckNull(OwnerCharacter);
+	APawn* ownerPawn = TryGetPawnOwner();
+	CheckNull(ownerPawn);
 
-	Speed = OwnerCharacter->GetVelocity().Size2D();
-	Direction = CalculateDirection(OwnerCharacter->GetVelocity(), OwnerCharacter->GetControlRotation());
-	IsFalling = OwnerCharacter->GetCharacterMovement()->IsFalling();
+	Speed = ownerPawn->GetVelocity().Size2D();
+	Direction = CalculateDirection(ownerPawn->GetVelocity(), ownerPawn->GetControlRotation());
+	bIsFalling = Cast<ACharacter>(ownerPawn)->GetMovementComponent()->IsFalling();
+}
+
+void UPlayerAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionType InNewType)
+{
+	ActionType = InNewType;
 }
 
 
