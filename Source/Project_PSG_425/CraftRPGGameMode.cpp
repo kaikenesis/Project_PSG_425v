@@ -5,7 +5,7 @@
 ACraftRPGGameMode::ACraftRPGGameMode()
 {
 	TSubclassOf<APawn> pawnAssetClass;
-	CHelpers::GetClass<APawn>(&pawnAssetClass, "/Game/Characters/Player/BP_Player_Soldier");
+	CHelpers::GetClass<APawn>(&pawnAssetClass, "/Game/Blueprints/Characters/Player/BP_Player_Soldier");
 	if (!!pawnAssetClass)
 		DefaultPawnClass = pawnAssetClass;
 

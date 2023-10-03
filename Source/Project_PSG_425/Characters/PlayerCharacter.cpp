@@ -3,7 +3,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
-#include "AnimInstance/PlayerAnimInstance.h"
 #include "Components/BuildingComponent.h"
 #include "Components/StatusComponent.h"
 #include "Components/ActionComponent.h"
@@ -22,26 +21,22 @@ APlayerCharacter::APlayerCharacter()
 	CHelpers::CreateActorComponent(this, &State, "State");
 
 	//Component Settings
-	//<Mesh>
+	//<Mesh Comp>
 	USkeletalMesh* skeletalMesh;
-	CHelpers::GetAsset<USkeletalMesh>(&skeletalMesh, "SkeletalMesh'/Game/Characters/Player/Mesh/Character/SK_Sci_Fi_Character_08_Full_02.SK_Sci_Fi_Character_08_Full_02'");
+	CHelpers::GetAsset<USkeletalMesh>(&skeletalMesh, "SkeletalMesh'/Game/Blueprints/Characters/Player/Mesh/SK_Sci_Fi_Character_08_Full_02.SK_Sci_Fi_Character_08_Full_02'");
 	if(!!skeletalMesh)
 		GetMesh()->SetSkeletalMesh(skeletalMesh);
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
-	TSubclassOf<class UPlayerAnimInstance> animClass;
-	CHelpers::GetClass<UPlayerAnimInstance>(&animClass, "AnimBlueprint'/Game/Characters/Player/Animations/ABP_Player_Soldier.ABP_Player_Soldier_C'");
-	if(!!animClass)
-		GetMesh()->SetAnimInstanceClass(animClass);
-
-	//<Movement>
+	//<Movement Comp>
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	
-	//<SpringArm>
+	//<SpringArm Comp>
 	SpringArm->SetRelativeLocation(FVector(0, 0, 140));
 	SpringArm->TargetArmLength = 200.f;
 	SpringArm->bUsePawnControlRotation = true;
@@ -51,6 +46,8 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::BeginPlay()
 {
+	State->OnStateTypeChanged.AddDynamic(this, &APlayerCharacter::OnStateTypeChanged);
+
 	Super::BeginPlay();
 }
 
@@ -110,11 +107,14 @@ void APlayerCharacter::OnAction()
 
 void APlayerCharacter::OnSubAction()
 {
-	//Action->DoSubAction();
+	Action->SetSubAction(true);
+	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
 }
 
 void APlayerCharacter::OffSubAction()
 {
+	Action->SetSubAction(false);
+	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 }
 
 void APlayerCharacter::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
@@ -159,10 +159,12 @@ void APlayerCharacter::OnVerticalLook(float Axis)
 
 void APlayerCharacter::OnWalk()
 {
+	CheckTrue(Action->IsSubAction());
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
 }
 
 void APlayerCharacter::OffWalk()
 {
+	CheckTrue(Action->IsSubAction());
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 }

@@ -20,6 +20,10 @@ void ADoAction_Melee::DoAction()
 
 	CheckFalse(StateComp->IsIdleMode());
 	StateComp->SetActionMode();
+
+	//첫공격만 실행
+	OwnerCharacter->PlayAnimMontage(Datas[0].AnimMontage, Datas[0].PlayRate, Datas[0].StartSection);
+	Datas[0].bCanMove ? StatusComp->SetMove() : StatusComp->SetStop();
 }
 
 void ADoAction_Melee::Begin_DoAction()

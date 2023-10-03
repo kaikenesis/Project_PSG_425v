@@ -14,6 +14,7 @@ void UPlayerAnimInstance::NativeBeginPlay()
 	CheckNull(actionComp);
 
 	actionComp->OnActionTypeChanged.AddDynamic(this, &UPlayerAnimInstance::OnActionTypeChanged);
+	actionComp->OnSubActionTypeChanged.AddDynamic(this, &UPlayerAnimInstance::OnSubActionTypeChanged);
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSecnods)
@@ -33,4 +34,7 @@ void UPlayerAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionTyp
 	ActionType = InNewType;
 }
 
-
+void UPlayerAnimInstance::OnSubActionTypeChanged(bool InSubAction)
+{
+	bSubAction = InSubAction;
+}

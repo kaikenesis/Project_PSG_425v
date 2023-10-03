@@ -1,7 +1,7 @@
 #include "BuildingComponent.h"
 #include "GameFramework/Character.h"
 #include "Global.h"
-#include "Characters/BaseCharacter.h"
+#include "Characters/PlayerCharacter.h"
 #include "BuildingObject/BaseBuildingObject.h"
 #include "BuildingObject/Modular/BuildingCeiling.h"
 #include "BuildingObject/Modular/BuildingCeilingTriangle.h"

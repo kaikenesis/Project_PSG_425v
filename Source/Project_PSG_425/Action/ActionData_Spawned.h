@@ -66,9 +66,11 @@ public:
 	FORCEINLINE class AEquipment* GetEquipment() { return Equipment; }
 	FORCEINLINE class AAttachment* GetAttachment() { return Attachment; }
 	FORCEINLINE class ADoAction* GetDoAction() { return DoAction; }
+	FORCEINLINE class ADoAction* GetDoSubAction() { return DoSubAction; }
 
 private:
 	class AEquipment* Equipment;
 	class AAttachment* Attachment;
 	class ADoAction* DoAction;
+	class ADoAction* DoSubAction;
 };

@@ -18,6 +18,9 @@ private:
 	UFUNCTION()
 		void OnActionTypeChanged(EActionType InPrevType, EActionType InNewType);
 
+	UFUNCTION()
+		void OnSubActionTypeChanged(bool InSubAction);
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
 		float Speed;
@@ -30,5 +33,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
 		EActionType ActionType;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
+		bool bSubAction;
 
 };

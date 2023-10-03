@@ -31,4 +31,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "DoAction")
 		TArray<FDoActionData> DoActionDatas;
+
+	UPROPERTY(EditAnywhere, Category = "DoSubAction")
+		TSubclassOf<class ADoAction> DoSubActionClass;
+
+	UPROPERTY(EditAnywhere, Category = "DoSubAction")
+		TArray<FDoActionData> DoSubActionDatas;
 };

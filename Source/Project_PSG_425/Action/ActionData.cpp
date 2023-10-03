@@ -51,10 +51,30 @@ void UActionData::BeginPlay(class ACharacter* InOwnerCharacter, UActionData_Spaw
 		}
 	}
 
+	ADoAction* doSubAction = nullptr;
+	if (!!DoSubActionClass)
+	{
+		doSubAction = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ADoAction>(DoSubActionClass, transform, InOwnerCharacter);
+		doSubAction->SetDatas(DoSubActionDatas);
+		doSubAction->SetActorLabel(GetCustomActorLabel(InOwnerCharacter, "DoSubAction"));
+		UGameplayStatics::FinishSpawningActor(doSubAction, transform);
+
+		if (!!equipment)
+		{
+			doSubAction->SetEquippedThis(equipment->IsEquippedThis());
+		}
+		if (!!attachment)
+		{
+			attachment->OnBeginOverlap.AddDynamic(doSubAction, &ADoAction::OnBeginOverlap);
+			attachment->OnEndOverlap.AddDynamic(doSubAction, &ADoAction::OnEndOverlap);
+		}
+	}
+
 	(*OutSpawned) = NewObject<UActionData_Spawned>();
 	(*OutSpawned)->Attachment = attachment;
 	(*OutSpawned)->Equipment = equipment;
 	(*OutSpawned)->DoAction = doAction;
+	(*OutSpawned)->DoSubAction = doSubAction;
 }
 
 FString UActionData::GetCustomActorLabel(ACharacter* InOwnerCharacter, FString ImMiddleName)

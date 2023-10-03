@@ -1,12 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/BaseCharacter.h"
+#include "GameFramework/Character.h"
 #include "Components/StateComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class PROJECT_PSG_425_API APlayerCharacter : public ABaseCharacter
+class PROJECT_PSG_425_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -18,6 +18,7 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private: // Axis Event
@@ -58,4 +59,5 @@ private: //Actor Component
 
 	UPROPERTY(VisibleDefaultsOnly)
 		class UStateComponent* State;
+
 };

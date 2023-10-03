@@ -51,12 +51,35 @@ void UActionComponent::SetMagicBallMode()
 	SetMode(EActionType::MagicBall);
 }
 
+void UActionComponent::SetSubAction(bool InSubAction)
+{
+	bSubAction = InSubAction;
+
+	if (OnSubActionTypeChanged.IsBound())
+		OnSubActionTypeChanged.Broadcast(bSubAction);
+}
+
 void UActionComponent::DoAction()
 {
 	CheckTrue(IsUnarmedMode());
+	
+	if (IsSubAction() == false) // SubAction를 하고있지 않을때
+	{
+		//Main Action
+		if (!!GetCurrentData() && !!GetCurrentData()->GetDoAction())
+			GetCurrentData()->GetDoAction()->DoAction();
 
-	if (!!GetCurrentData() && !!GetCurrentData()->GetDoAction())
-		GetCurrentData()->GetDoAction()->DoAction();
+		return;
+	}
+	
+	DoSubAction();
+}
+
+void UActionComponent::DoSubAction()
+{
+	//Sub Action
+	if (!!GetCurrentData() && !!GetCurrentData()->GetDoSubAction())
+		GetCurrentData()->GetDoSubAction()->DoAction();
 }
 
 void UActionComponent::OffAllCollisions()
@@ -99,4 +122,3 @@ void UActionComponent::ChangeType(EActionType InNewType)
 	if (OnActionTypeChanged.IsBound())
 		OnActionTypeChanged.Broadcast(prev, InNewType);
 }
-

@@ -15,6 +15,7 @@ enum class EActionType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChangedSignature, EActionType, InPrevType, EActionType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSubActionTypeChangedSignature, bool, InSubAction);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_PSG_425_API UActionComponent : public UActorComponent
@@ -46,14 +47,19 @@ public: //Get Action
 	UFUNCTION(BlueprintPure)
 		FORCEINLINE bool IsMagicBallMode() { return Type == EActionType::MagicBall; }
 
+	UFUNCTION(BlueprintPure)
+		FORCEINLINE bool IsSubAction() { return bSubAction; }
+
 public: //Set Action
 	void SetUnarmedMode();
 	void SetOneHandShieldMode();
 	void SetTwoHandMode();
 	void SetMagicBallMode();
+	void SetSubAction(bool InSubAction);
 
 public:
 	void DoAction();
+	void DoSubAction();
 
 	void OffAllCollisions();
 
@@ -65,12 +71,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FActionTypeChangedSignature OnActionTypeChanged;
 
+	UPROPERTY(BlueprintAssignable)
+		FSubActionTypeChangedSignature OnSubActionTypeChanged;
+
 private:
 	UPROPERTY(EditAnywhere)
 		class UActionData* DataAssets[(int32)EActionType::Max];
 
 private:
 	EActionType Type;
+	bool bSubAction;
 		
 	UPROPERTY()
 		class UActionData_Spawned* Datas[(int32)EActionType::Max];
