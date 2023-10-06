@@ -55,8 +55,8 @@ void UActionComponent::SetSubAction(bool InSubAction)
 {
 	bSubAction = InSubAction;
 
-	if (OnSubActionTypeChanged.IsBound())
-		OnSubActionTypeChanged.Broadcast(bSubAction);
+	if (OnDoSubAction.IsBound())
+		OnDoSubAction.Broadcast(bSubAction);
 }
 
 void UActionComponent::DoAction()

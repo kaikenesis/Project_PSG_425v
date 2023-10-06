@@ -31,6 +31,11 @@ void UStateComponent::SetRollMode()
 	ChangeType(EStateType::Roll);
 }
 
+void UStateComponent::SetEvadeMode()
+{
+	ChangeType(EStateType::Evade);
+}
+
 void UStateComponent::SetEquipMode()
 {
 	ChangeType(EStateType::Equip);
@@ -39,6 +44,11 @@ void UStateComponent::SetEquipMode()
 void UStateComponent::SetActionMode()
 {
 	ChangeType(EStateType::Action);
+}
+
+void UStateComponent::SetBlockMode()
+{
+	ChangeType(EStateType::Block);
 }
 
 void UStateComponent::SetHittedMode()

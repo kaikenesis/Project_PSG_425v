@@ -4,6 +4,7 @@
 #include "Components/BuildingComponent.h"
 #include "Components/StatusComponent.h"
 #include "Components/ActionComponent.h"
+#include "Components/MontagesComponent.h"
 #include "Components/CapsuleComponent.h"
 
 AEnemy::AEnemy()
@@ -12,6 +13,7 @@ AEnemy::AEnemy()
 
 	// Create Actor Component
 	CHelpers::CreateActorComponent(this, &Action, "Action");
+	CHelpers::CreateActorComponent(this, &Montages, "Montages");
 	CHelpers::CreateActorComponent(this, &Status, "Status");
 	CHelpers::CreateActorComponent(this, &State, "State");
 
@@ -24,11 +26,6 @@ AEnemy::AEnemy()
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-
-	/*TSubclassOf<UAnimInstance> animInstanceClass;
-	CHelpers::GetClass(&animInstanceClass, "/Game/Characters/Mannequin/Animations/ABP_Player");
-	if (!!animInstanceClass)
-		GetMesh()->SetAnimInstanceClass(animInstanceClass);*/
 
 	//<Movement Comp>
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
@@ -80,6 +77,9 @@ float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControl
 
 void AEnemy::Hitted()
 {
+	//Play Hitted Montage
+	Montages->PlayHitted();
+
 	//Look At Attacker
 	FVector start = GetActorLocation();
 	FVector target = Attacker->GetActorLocation();

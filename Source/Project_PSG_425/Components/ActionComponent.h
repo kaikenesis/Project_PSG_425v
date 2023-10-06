@@ -15,7 +15,7 @@ enum class EActionType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChangedSignature, EActionType, InPrevType, EActionType, InNewType);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSubActionTypeChangedSignature, bool, InSubAction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDoSubActionSignature, bool, InSubAction);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_PSG_425_API UActionComponent : public UActorComponent
@@ -72,7 +72,7 @@ public:
 		FActionTypeChangedSignature OnActionTypeChanged;
 
 	UPROPERTY(BlueprintAssignable)
-		FSubActionTypeChangedSignature OnSubActionTypeChanged;
+		FDoSubActionSignature OnDoSubAction;
 
 private:
 	UPROPERTY(EditAnywhere)

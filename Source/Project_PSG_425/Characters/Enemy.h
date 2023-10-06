@@ -38,6 +38,9 @@ protected: //Actor Component
 
 private: //Actor Component
 	UPROPERTY(VisibleDefaultsOnly)
+		class UMontagesComponent* Montages;
+
+	UPROPERTY(VisibleDefaultsOnly)
 		class UStatusComponent* Status;
 
 	UPROPERTY(VisibleDefaultsOnly)

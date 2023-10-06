@@ -9,8 +9,10 @@ enum class EStateType : uint8
 {
 	Idle,
 	Roll,
+	Evade,
 	Equip,
 	Action,
+	Block,
 	Hitted,
 	Dead,
 	Max
@@ -35,16 +37,20 @@ public:
 public: //Get State
 	FORCEINLINE bool IsIdleMode() { return Type == EStateType::Idle; }
 	FORCEINLINE bool IsRollMode() { return Type == EStateType::Roll; }
+	FORCEINLINE bool IsEvadeMode() { return Type == EStateType::Evade; }
 	FORCEINLINE bool IsEquipMode() { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsActionMode() { return Type == EStateType::Action; }
+	FORCEINLINE bool IsBlockMode() { return Type == EStateType::Block; }
 	FORCEINLINE bool IsHittedMode() { return Type == EStateType::Hitted; }
 	FORCEINLINE bool IsDeadMode() { return Type == EStateType::Dead; }
 
 public: //Set State
 	void SetIdleMode();
 	void SetRollMode();
+	void SetEvadeMode();
 	void SetEquipMode();
 	void SetActionMode();
+	void SetBlockMode();
 	void SetHittedMode();
 	void SetDeadMode();
 

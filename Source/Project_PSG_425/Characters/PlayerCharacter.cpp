@@ -6,6 +6,7 @@
 #include "Components/BuildingComponent.h"
 #include "Components/StatusComponent.h"
 #include "Components/ActionComponent.h"
+#include "Components/MontagesComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -17,6 +18,7 @@ APlayerCharacter::APlayerCharacter()
 
 	// Create Actor Component
 	CHelpers::CreateActorComponent(this, &Action, "Action");
+	CHelpers::CreateActorComponent(this, &Montages, "Montages");
 	CHelpers::CreateActorComponent(this, &Status, "Status");
 	CHelpers::CreateActorComponent(this, &State, "State");
 
@@ -121,9 +123,9 @@ void APlayerCharacter::OnStateTypeChanged(EStateType InPrevType, EStateType InNe
 {
 	switch (InNewType)
 	{
-	case EStateType::Roll:			break;
-	case EStateType::Hitted:		break;
-	case EStateType::Dead:			break;
+	case EStateType::Roll:		Montages->PlayRoll();		break;
+	case EStateType::Hitted:	Montages->PlayHitted();		break;
+	case EStateType::Dead:		Montages->PlayDead();		break;
 	}
 }
 

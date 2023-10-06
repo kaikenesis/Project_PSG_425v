@@ -55,6 +55,9 @@ private: //Actor Component
 		class UActionComponent* Action;
 
 	UPROPERTY(VisibleDefaultsOnly)
+		class UMontagesComponent* Montages;
+
+	UPROPERTY(VisibleDefaultsOnly)
 		class UStatusComponent* Status;
 
 	UPROPERTY(VisibleDefaultsOnly)

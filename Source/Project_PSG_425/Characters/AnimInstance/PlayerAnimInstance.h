@@ -19,7 +19,7 @@ private:
 		void OnActionTypeChanged(EActionType InPrevType, EActionType InNewType);
 
 	UFUNCTION()
-		void OnSubActionTypeChanged(bool InSubAction);
+		void OnDoSubAction(bool InSubAction);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
