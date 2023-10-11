@@ -33,12 +33,12 @@ void UStatusComponent::SetStop()
 
 void UStatusComponent::IncreaseHealth(float InAmount)
 {
-	CurrentHealth -= InAmount;
+	CurrentHealth += InAmount;
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
 }
 
 void UStatusComponent::DecreaseHealth(float InAmount)
 {
-	CurrentHealth += InAmount;
+	CurrentHealth -= InAmount;
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
 }

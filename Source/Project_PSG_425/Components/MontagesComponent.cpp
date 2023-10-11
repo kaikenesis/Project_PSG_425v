@@ -36,17 +36,20 @@ void UMontagesComponent::BeginPlay()
 	DataTable->GetAllRows<FMontageData>("", datas);
 
 	int32 size = (int32)EStateType::Max + (int32)EActionType::Max;
-	for (int32 i = 0; i < size; i++)
+	for (int32 i = 0; i < (int32)EActionType::Max; i++)
 	{
 		for (const auto& data : datas)
 		{
 			if ((EActionType)i == data->ActionType)
 			{
-				if ((EStateType)i == data->StateType)
+				for (int32 j = 0; j < (int32)EStateType::Max; j++)
 				{
-					Datas[i] = data;
+					if ((EStateType)j == data->StateType)
+					{
+						Datas[i + j] = data;
 
-					break;
+						break;
+					}
 				}
 			}
 		}

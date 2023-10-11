@@ -72,5 +72,14 @@ void AAttachment::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 
 void AAttachment::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	CheckTrue(OwnerCharacter == OtherActor);
+
+	ACharacter* otherCharacter = Cast<ACharacter>(OtherActor);
+
+	if (OnEndOverlap.IsBound())
+	{
+		if (!!otherCharacter)
+			OnEndOverlap.Broadcast(OwnerCharacter, this, otherCharacter);
+	}
 }
 

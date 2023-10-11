@@ -110,12 +110,14 @@ void APlayerCharacter::OnAction()
 void APlayerCharacter::OnSubAction()
 {
 	Action->SetSubAction(true);
+
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
 }
 
 void APlayerCharacter::OffSubAction()
 {
 	Action->SetSubAction(false);
+
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 }
 
@@ -132,6 +134,7 @@ void APlayerCharacter::OnStateTypeChanged(EStateType InPrevType, EStateType InNe
 void APlayerCharacter::OnMoveForward(float Axis)
 {
 	CheckFalse(Status->IsCanMove());
+	CheckTrue(Action->IsTwoHandMode() && Action->IsSubAction());
 
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetForwardVector().GetSafeNormal2D();
@@ -142,6 +145,7 @@ void APlayerCharacter::OnMoveForward(float Axis)
 void APlayerCharacter::OnMoveRight(float Axis)
 {
 	CheckFalse(Status->IsCanMove());
+	CheckTrue(Action->IsTwoHandMode() && Action->IsSubAction());
 
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
 	FVector direction = FQuat(rotator).GetRightVector().GetSafeNormal2D();

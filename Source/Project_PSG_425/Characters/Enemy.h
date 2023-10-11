@@ -32,6 +32,13 @@ private:
 	UFUNCTION()
 		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
+private: //Scene Component
+	UPROPERTY(VisibleDefaultsOnly)
+		class UWidgetComponent* NameWidget;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UWidgetComponent* HealthWidget;
+
 protected: //Actor Component
 	UPROPERTY(VisibleDefaultsOnly)
 		class UActionComponent* Action;

@@ -2,14 +2,21 @@
 #include "Global.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/BuildingComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/StatusComponent.h"
 #include "Components/ActionComponent.h"
 #include "Components/MontagesComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Widgets/NameWidget.h"
+#include "Widgets/HealthWidget.h"
 
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	//Create Scene Component
+	CHelpers::CreateSceneComponent(this, &NameWidget, "NameWidget", GetMesh());
+	CHelpers::CreateSceneComponent(this, &HealthWidget, "HealthWidget", GetMesh());
 
 	// Create Actor Component
 	CHelpers::CreateActorComponent(this, &Action, "Action");
@@ -33,6 +40,19 @@ AEnemy::AEnemy()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 
 	//<Widget Comp>
+	TSubclassOf<UNameWidget> nameWidgetClass;
+	CHelpers::GetClass(&nameWidgetClass, "/Game/Widgets/WB_Name");
+	NameWidget->SetWidgetClass(nameWidgetClass);
+	NameWidget->SetRelativeLocation(FVector(0, 0, 220));
+	NameWidget->SetDrawSize(FVector2D(240, 50));
+	NameWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
+	TSubclassOf<UHealthWidget> healthWidgetClass;
+	CHelpers::GetClass(&healthWidgetClass, "/Game/Widgets/WB_Health");
+	HealthWidget->SetWidgetClass(healthWidgetClass);
+	HealthWidget->SetRelativeLocation(FVector(0, 0, 180));
+	HealthWidget->SetDrawSize(FVector2D(120, 20));
+	HealthWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AEnemy::BeginPlay()
@@ -41,6 +61,20 @@ void AEnemy::BeginPlay()
 
 	Super::BeginPlay();
 	
+	//Widget Settings
+	NameWidget->InitWidget();
+	UNameWidget* nameWidget = Cast<UNameWidget>(NameWidget->GetUserWidgetObject());
+	if (!!nameWidget)
+	{
+		nameWidget->SetNames(GetController()->GetName(), GetName());
+	}
+
+	HealthWidget->InitWidget();
+	UHealthWidget* healthWidget = Cast<UHealthWidget>(HealthWidget->GetUserWidgetObject());
+	if (!!healthWidget)
+	{
+		healthWidget->UpdateHealth(Status->GetCurrentHealth(), Status->GetMaxHealth());
+	}
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -77,6 +111,14 @@ float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControl
 
 void AEnemy::Hitted()
 {
+	//Apply Health Widget
+	UHealthWidget* healthWidget = Cast<UHealthWidget>(HealthWidget->GetUserWidgetObject());
+	if (!!healthWidget)
+	{
+		CLog::Print("UpdateHealthWidget");
+		healthWidget->UpdateHealth(Status->GetCurrentHealth(), Status->GetMaxHealth());
+	}
+
 	//Play Hitted Montage
 	Montages->PlayHitted();
 
@@ -93,6 +135,10 @@ void AEnemy::Hitted()
 
 void AEnemy::Dead()
 {
+	//Widget Visibility Disable
+	NameWidget->SetVisibility(false);
+	HealthWidget->SetVisibility(false);
+
 	//Ragdoll
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

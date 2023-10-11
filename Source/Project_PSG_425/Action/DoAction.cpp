@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Components/StateComponent.h"
 #include "Components/StatusComponent.h"
+#include "Components/ActionComponent.h"
 
 ADoAction::ADoAction()
 {
@@ -26,4 +27,3 @@ void ADoAction::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

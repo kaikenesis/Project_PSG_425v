@@ -1,6 +1,7 @@
 #include "DoAction_Melee.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/StateComponent.h"
 #include "Components/StatusComponent.h"
 
