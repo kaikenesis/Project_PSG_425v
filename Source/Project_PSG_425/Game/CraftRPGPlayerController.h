@@ -26,6 +26,7 @@ private:
 	void FinishBuild();
 	void ShowBuildingMenu();
 	void HideBuildingMenu();
+	void StopBuildMode();
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)

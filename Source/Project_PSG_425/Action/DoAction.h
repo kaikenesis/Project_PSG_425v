@@ -24,9 +24,11 @@ public:
 	FORCEINLINE void SetEquippedThis(const bool* InEquippedThis) { bEquippedThis = InEquippedThis; }
 
 	virtual void DoAction() {}
-	virtual void DoSubAction() {}
 	virtual void Begin_DoAction() {}
 	virtual void End_DoAction() {}
+
+	virtual void OnAim() {}
+	virtual void OffAim() {}
 
 public:
 	UFUNCTION()

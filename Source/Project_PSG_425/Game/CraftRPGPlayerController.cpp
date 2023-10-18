@@ -24,6 +24,7 @@ void ACraftRPGPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::E, IE_Pressed, this, &ACraftRPGPlayerController::FinishBuild);
 	InputComponent->BindKey(EKeys::Q, IE_Pressed, this, &ACraftRPGPlayerController::ShowBuildingMenu);
 	InputComponent->BindKey(EKeys::Q, IE_Released, this, &ACraftRPGPlayerController::HideBuildingMenu);
+	InputComponent->BindKey(EKeys::F10, IE_Released, this, &ACraftRPGPlayerController::StopBuildMode);
 }
 
 void ACraftRPGPlayerController::TryBuild(FDataTableRowHandle InBuildingObjectHandle)
@@ -48,6 +49,12 @@ void ACraftRPGPlayerController::HideBuildingMenu()
 {
 	if (!!BuildingComponent)
 		BuildingComponent->HideBuildingMenu();
+}
+
+void ACraftRPGPlayerController::StopBuildMode()
+{
+	if (!!BuildingComponent)
+		BuildingComponent->DestroyBuildingObject();
 }
 
 void ACraftRPGPlayerController::TryStartBuildObject_Interface(FDataTableRowHandle InBuildingObjectHandle)

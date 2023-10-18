@@ -3,8 +3,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Game/CraftRPGPlayerController.h"
 #include "Components/BuildingComponent.h"
 #include "Components/StatusComponent.h"
+#include "Components/StateComponent.h"
 #include "Components/ActionComponent.h"
 #include "Components/MontagesComponent.h"
 
@@ -48,6 +50,11 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::BeginPlay()
 {
+	ACraftRPGPlayerController* controller = Cast<ACraftRPGPlayerController>(GetController());
+	if(!!controller)
+		BuildComp = CHelpers::GetComponent<UBuildingComponent>(controller);
+
+
 	State->OnStateTypeChanged.AddDynamic(this, &APlayerCharacter::OnStateTypeChanged);
 
 	Super::BeginPlay();
@@ -104,11 +111,15 @@ void APlayerCharacter::OnMagicBall()
 
 void APlayerCharacter::OnAction()
 {
+	CheckTrue(BuildComp->IsBuildMode());
+
 	Action->DoAction();
 }
 
 void APlayerCharacter::OnSubAction()
 {
+	CheckTrue(BuildComp->IsBuildMode());
+
 	Action->SetSubAction(true);
 
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
@@ -116,6 +127,8 @@ void APlayerCharacter::OnSubAction()
 
 void APlayerCharacter::OffSubAction()
 {
+	CheckTrue(BuildComp->IsBuildMode());
+
 	Action->SetSubAction(false);
 
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
@@ -133,22 +146,24 @@ void APlayerCharacter::OnStateTypeChanged(EStateType InPrevType, EStateType InNe
 
 void APlayerCharacter::OnMoveForward(float Axis)
 {
+	CheckTrue(FMath::IsNearlyZero(Axis));
 	CheckFalse(Status->IsCanMove());
 	CheckTrue(Action->IsTwoHandMode() && Action->IsSubAction());
 
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetForwardVector().GetSafeNormal2D();
+	FVector direction = FQuat(rotator).GetForwardVector();
 
 	AddMovementInput(direction, Axis);
 }
 
 void APlayerCharacter::OnMoveRight(float Axis)
 {
+	CheckTrue(FMath::IsNearlyZero(Axis));
 	CheckFalse(Status->IsCanMove());
 	CheckTrue(Action->IsTwoHandMode() && Action->IsSubAction());
 
 	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetRightVector().GetSafeNormal2D();
+	FVector direction = FQuat(rotator).GetRightVector();
 
 	AddMovementInput(direction, Axis);
 }

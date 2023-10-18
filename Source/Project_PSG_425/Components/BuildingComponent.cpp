@@ -442,7 +442,7 @@ void UBuildingComponent::HideBuildingMenu(bool Success)
 
 void UBuildingComponent::TryStartBuildObject(FDataTableRowHandle InBuildingObjectHandle)
 {
-	//CheckBuildRequirements(InBuildingObjectHandle); -> 자원추가할때 쓰는 함수
+	//CheckBuildRequirements(InBuildingObjectHandle); -> 자원추가할때 쓸 함수
 	StartBuildObject(InBuildingObjectHandle);
 }
 
@@ -474,36 +474,39 @@ void UBuildingComponent::StartBuildObject(FDataTableRowHandle InBuildingObjectHa
 	if (result == true)
 	{
 		FBuildingObjectSettings* buildingObjectHandle = InBuildingObjectHandle.DataTable->FindRow<FBuildingObjectSettings>(InBuildingObjectHandle.RowName, "");
-		if (!!buildingObjectHandle)
-		{
-			//ChangeBuildingMode(Enum);
+		CheckNull(buildingObjectHandle);
+		
+		//ChangeBuildingMode(Enum);
 
-			LastBuildingObjectHandle = buildingObjectHandle->Handle;
-			LastBuildingObjectClass = buildingObjectHandle->Class;
+		LastBuildingObjectHandle = buildingObjectHandle->Handle;
+		CheckTrue(LastBuildingObjectHandle.IsNull());
 
-			DestroyBuildingObject();
+		LastBuildingObjectClass = buildingObjectHandle->Class;
+		CheckNull(LastBuildingObjectClass);
 
-			FTransform transform;
+		DestroyBuildingObject();
 
-			BuildingObject = GetWorld()->SpawnActorDeferred<ABaseBuildingObject>(LastBuildingObjectClass, transform);
-			BuildingObject->BuildingObjectHandle = LastBuildingObjectHandle;
-			BuildingObject->FinishSpawning(transform);
+		FTransform transform;
 
-			BuildingObject->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			BuildingObject->TryBuildMode();
-			BuildingObject->UpdateOverlaps();
+		BuildingObject = GetWorld()->SpawnActorDeferred<ABaseBuildingObject>(LastBuildingObjectClass, transform);
+		BuildingObject->BuildingObjectHandle = LastBuildingObjectHandle;
+		BuildingObject->FinishSpawning(transform);
 
-			if (BuildingObject->IsOverlappedObject() == true)
-				BuildingObject->SetCanNotBuild();
-			else
-				BuildingObject->SetCanBuild();
+		BuildingObject->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		BuildingObject->TryBuildMode();
+		BuildingObject->UpdateOverlaps();
 
-			BuildTransform.SetLocation(FVector(0.f, 0.f, 0.f));
-			BuildTransform.SetRotation(FQuat(FRotator(0.f, 0.f, 0.f)));
-			BuildTransform.SetScale3D(FVector(1.f, 1.f, 1.f));
+		if (BuildingObject->IsOverlappedObject() == true)
+			BuildingObject->SetCanNotBuild();
+		else
+			BuildingObject->SetCanBuild();
 
-			BuildingObjectRotation = BuildingObject->GetActorRotation() + FRotator(0.f, 90.f, 0.f);
-		}
+		BuildTransform.SetLocation(FVector(0.f, 0.f, 0.f));
+		BuildTransform.SetRotation(FQuat(FRotator(0.f, 0.f, 0.f)));
+		BuildTransform.SetScale3D(FVector(1.f, 1.f, 1.f));
+
+		BuildingObjectRotation = BuildingObject->GetActorRotation() + FRotator(0.f, 90.f, 0.f);
+		bBuildMode = true;
 	}
 }
 
@@ -513,6 +516,8 @@ void UBuildingComponent::DestroyBuildingObject()
 	{
 		BuildingObject->Destroy();
 		BuildingObject = nullptr;
+
+		bBuildMode = false;
 	}
 }
 

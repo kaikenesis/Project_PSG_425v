@@ -25,7 +25,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSecnods)
 	CheckNull(ownerPawn);
 
 	Speed = ownerPawn->GetVelocity().Size2D();
-	Direction = CalculateDirection(ownerPawn->GetVelocity(), ownerPawn->GetControlRotation());
+	Direction = CalculateDirection(ownerPawn->GetVelocity(), ownerPawn->GetActorRotation());
 	bIsFalling = Cast<ACharacter>(ownerPawn)->GetMovementComponent()->IsFalling();
 }
 

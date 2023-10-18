@@ -39,11 +39,16 @@ public:
 	void DestroyBuildingObject();
 
 public:
+	FORCEINLINE bool IsBuildMode() { return bBuildMode; }
+
+public:
 	bool bTraceToMouseMode = false;
 	float TraceDistance = 1000.f;
 
 private:
 	class APlayerController* OwnerPlayerController;
+
+	bool bBuildMode;
 
 	class ABaseBuildingObject* BuildingObject;
 	class ABaseBuildingObject* NewHitActor;

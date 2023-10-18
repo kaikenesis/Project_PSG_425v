@@ -63,4 +63,7 @@ private: //Actor Component
 	UPROPERTY(VisibleDefaultsOnly)
 		class UStateComponent* State;
 
+private:
+	class UBuildingComponent* BuildComp;
+
 };

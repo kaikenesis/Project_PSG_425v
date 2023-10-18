@@ -115,7 +115,6 @@ void AEnemy::Hitted()
 	UHealthWidget* healthWidget = Cast<UHealthWidget>(HealthWidget->GetUserWidgetObject());
 	if (!!healthWidget)
 	{
-		CLog::Print("UpdateHealthWidget");
 		healthWidget->UpdateHealth(Status->GetCurrentHealth(), Status->GetMaxHealth());
 	}
 
