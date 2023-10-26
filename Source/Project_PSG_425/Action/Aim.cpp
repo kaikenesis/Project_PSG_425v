@@ -36,8 +36,8 @@ void UAim::On()
 
 	bZooming = true;
 
-	SpringArm->TargetArmLength = 100.f;
-	SpringArm->SocketOffset = FVector(0, 30, 10);
+	SpringArm->TargetArmLength = 150.f;
+	SpringArm->SocketOffset = FVector(0, 40, 10);
 	SpringArm->bEnableCameraLag = false;
 
 	Timeline.Play();

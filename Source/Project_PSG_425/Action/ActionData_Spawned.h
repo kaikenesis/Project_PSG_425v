@@ -50,8 +50,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UCameraShake> ShakeClass;
 
-	//UPROPERTY(EditAnywhere)
-	//	TSubclassOf<class ACMagicBall> ProjectileClass;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AMagicBall> ProjectileClass;
 };
 
 UCLASS()

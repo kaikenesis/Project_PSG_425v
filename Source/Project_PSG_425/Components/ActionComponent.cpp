@@ -55,6 +55,17 @@ void UActionComponent::SetSubAction(bool InSubAction)
 {
 	bSubAction = InSubAction;
 
+	if (IsMagicBallMode())
+	{
+		if (!!GetCurrentData() && !!GetCurrentData()->GetDoAction())
+		{
+			if (bSubAction == true)
+				GetCurrentData()->GetDoAction()->OnAim();
+			else
+				GetCurrentData()->GetDoAction()->OffAim();
+		}
+	}
+
 	if (OnDoSubAction.IsBound())
 		OnDoSubAction.Broadcast(bSubAction);
 }
@@ -62,7 +73,16 @@ void UActionComponent::SetSubAction(bool InSubAction)
 void UActionComponent::DoAction()
 {
 	CheckTrue(IsUnarmedMode());
-	
+
+	if (IsMagicBallMode())
+	{
+		if (!!GetCurrentData() && !!GetCurrentData()->GetDoAction())
+			GetCurrentData()->GetDoAction()->DoAction();
+
+		return;
+	}
+
+
 	if (IsSubAction() == false) // SubAction를 하고있지 않을때
 	{
 		//Main Action

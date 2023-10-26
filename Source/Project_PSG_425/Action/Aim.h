@@ -17,7 +17,7 @@ public:
 	void Tick(float DeltaTime);
 
 public:
-	FORCEINLINE bool IsAvailable() { return SpringArm != nullptr && Camera != nullptr; }
+	FORCEINLINE bool IsAvailable() { return SpringArm != nullptr && Camera != nullptr; } // 스프링암, 카메라를 가지고 있는지 == 플레이어인지
 	FORCEINLINE bool IsZooming() { return bZooming; }
 
 	void On();
