@@ -95,7 +95,7 @@ float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControl
 	Attacker = Cast<ACharacter>(EventInstigator->GetPawn());
 	Causer = DamageCauser;
 
-	//Action->AbortByDamaged();
+	Action->AbortByDamaged();
 	Status->DecreaseHealth(DamageValue);
 
 	if (Status->IsDead())

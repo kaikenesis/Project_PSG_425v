@@ -51,10 +51,11 @@ public: //Get Action
 		FORCEINLINE bool IsSubAction() { return bSubAction; }
 
 public: //Set Action
-	void SetUnarmedMode();
-	void SetOneHandShieldMode();
-	void SetTwoHandMode();
-	void SetMagicBallMode();
+	UFUNCTION(BlueprintCallable) void SetUnarmedMode();
+	UFUNCTION(BlueprintCallable) void SetOneHandShieldMode();
+	UFUNCTION(BlueprintCallable) void SetTwoHandMode();
+	UFUNCTION(BlueprintCallable) void SetMagicBallMode();
+
 	void SetSubAction(bool InSubAction);
 
 public:
@@ -62,6 +63,9 @@ public:
 	void DoSubAction();
 
 	void OffAllCollisions();
+
+	void AbortByDamaged();
+	void End_Dead();
 
 private:
 	void SetMode(EActionType InNewType);

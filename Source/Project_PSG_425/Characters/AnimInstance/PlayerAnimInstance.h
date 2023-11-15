@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Components/ActionComponent.h"
+#include "Components/StateComponent.h"
 #include "PlayerAnimInstance.generated.h"
 
 UCLASS()
@@ -19,6 +20,9 @@ private:
 		void OnActionTypeChanged(EActionType InPrevType, EActionType InNewType);
 
 	UFUNCTION()
+		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+
+	UFUNCTION()
 		void OnDoSubAction(bool InSubAction);
 
 protected:
@@ -32,9 +36,12 @@ protected:
 		bool bIsFalling;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
+		bool bSubAction;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
 		EActionType ActionType;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Animation")
-		bool bSubAction;
+		EStateType StateType;
 
 };

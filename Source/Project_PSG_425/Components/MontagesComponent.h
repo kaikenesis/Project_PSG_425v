@@ -44,6 +44,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	const FMontageData* GetData() { return Datas[(int32)EActionType::Max + (int32)EStateType::Max]; }
+
+public:
 	void PlayRoll();
 	void PlayEvade();
 	void PlayBlock();
@@ -65,7 +68,7 @@ private:
 		class UDataTable* DataTable;
 
 private:
-	FMontageData* Datas[(int32)EActionType::Max + (int32)EStateType::Max];
+	FMontageData* Datas[(int32)EActionType::Max * (int32)EStateType::Max];
 	EActionType CurrentActionType;
 	bool IsSubAction;
 };

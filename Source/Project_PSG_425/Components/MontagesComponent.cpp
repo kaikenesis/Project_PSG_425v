@@ -30,26 +30,26 @@ void UMontagesComponent::BeginPlay()
 	}
 
 	
-
+	//{ {0,1,2}, {0,1}, {0,1}}
 	TArray<FMontageData*> datas;
+	datas.Empty();
 
 	DataTable->GetAllRows<FMontageData>("", datas);
 
 	int32 size = (int32)EStateType::Max + (int32)EActionType::Max;
+
 	for (int32 i = 0; i < (int32)EActionType::Max; i++)
 	{
-		for (const auto& data : datas)
+		for (int32 j = 0; j < (int32)EStateType::Max; j++)
 		{
-			if ((EActionType)i == data->ActionType)
+			for (const auto& data : datas)
 			{
-				for (int32 j = 0; j < (int32)EStateType::Max; j++)
+				if ((EActionType)i == data->ActionType && (EStateType)j == data->StateType)
 				{
-					if ((EStateType)j == data->StateType)
-					{
-						Datas[i + j] = data;
+					int num = ((i + 1) * (j + 1)) - 1;
+					Datas[num] = data;
 
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -61,10 +61,13 @@ void UMontagesComponent::PlayAnimMontage(EActionType InActionType, EStateType In
 	ACharacter* ownerCharacter = Cast<ACharacter>(GetOwner());
 	CheckNull(ownerCharacter);
 
-	const FMontageData* data = Datas[(int32)InActionType + (int32)InStateType];
+	int num = ((int32)InActionType + 1) * ((int32)InStateType + 1) - 1;
+	FMontageData* data = Datas[num];
 
 	if (!!data && !!data->AnimMontage)
+	{
 		ownerCharacter->PlayAnimMontage(data->AnimMontage, data->PlayRate, data->StartSection);
+	}
 }
 
 void UMontagesComponent::PlayRoll()

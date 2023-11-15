@@ -116,6 +116,32 @@ void UActionComponent::OffAllCollisions()
 	}
 }
 
+void UActionComponent::AbortByDamaged()
+{
+	CheckNull(GetCurrentData());
+	CheckTrue(IsUnarmedMode());
+
+	GetCurrentData()->GetEquipment()->Begin_Equip();
+	GetCurrentData()->GetEquipment()->End_Equip();
+
+	GetCurrentData()->GetDoAction()->Abort();
+}
+
+void UActionComponent::End_Dead()
+{
+	for (int i = 0; i < (int32)EActionType::Max; i++)
+	{
+		if (!!Datas[i] && !!Datas[i]->GetEquipment())
+			Datas[i]->GetEquipment()->Destroy();
+
+		if (!!Datas[i] && !!Datas[i]->GetAttachment())
+			Datas[i]->GetAttachment()->Destroy();
+
+		if (!!Datas[i] && !!Datas[i]->GetDoAction())
+			Datas[i]->GetDoAction()->Destroy();
+	}
+}
+
 void UActionComponent::SetMode(EActionType InNewType)
 {
 	if (Type == InNewType)

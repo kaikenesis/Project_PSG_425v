@@ -12,6 +12,7 @@ enum class EStateType : uint8
 	Evade,
 	Equip,
 	Action,
+	Guard,
 	Block,
 	Hitted,
 	Dead,
@@ -40,6 +41,7 @@ public: //Get State
 	FORCEINLINE bool IsEvadeMode() { return Type == EStateType::Evade; }
 	FORCEINLINE bool IsEquipMode() { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsActionMode() { return Type == EStateType::Action; }
+	FORCEINLINE bool IsGuardMode() { return Type == EStateType::Guard; }
 	FORCEINLINE bool IsBlockMode() { return Type == EStateType::Block; }
 	FORCEINLINE bool IsHittedMode() { return Type == EStateType::Hitted; }
 	FORCEINLINE bool IsDeadMode() { return Type == EStateType::Dead; }
@@ -50,6 +52,7 @@ public: //Set State
 	void SetEvadeMode();
 	void SetEquipMode();
 	void SetActionMode();
+	void SetGuardMode();
 	void SetBlockMode();
 	void SetHittedMode();
 	void SetDeadMode();

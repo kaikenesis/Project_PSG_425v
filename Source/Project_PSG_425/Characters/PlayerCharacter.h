@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/StateComponent.h"
+#include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class PROJECT_PSG_425_API APlayerCharacter : public ACharacter
+class PROJECT_PSG_425_API APlayerCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -18,8 +19,11 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+public:
+	virtual FGenericTeamId GetGenericTeamId() const override;
 
 private: // Axis Event
 	void OnMoveForward(float Axis);
@@ -38,6 +42,14 @@ private: // Action Event
 	void OnAction();
 	void OnSubAction();
 	void OffSubAction();
+
+private:
+	void Blocked();
+	void Hitted();
+	void Dead();
+
+	UFUNCTION()
+		void End_Dead();
 
 private:
 	UFUNCTION()
@@ -64,6 +76,14 @@ private: //Actor Component
 		class UStateComponent* State;
 
 private:
-	class UBuildingComponent* BuildComp;
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+		uint8 PlayerTeamID = 0;
 
+private:
+	class UBuildingComponent* BuildComp;
+	FGenericTeamId TeamGenericID;
+
+	float DamageValue;
+	class ACharacter* Attacker;
+	class AActor* Causer;
 };

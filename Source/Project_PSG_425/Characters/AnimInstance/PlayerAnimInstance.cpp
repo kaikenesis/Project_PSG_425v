@@ -15,6 +15,11 @@ void UPlayerAnimInstance::NativeBeginPlay()
 
 	actionComp->OnActionTypeChanged.AddDynamic(this, &UPlayerAnimInstance::OnActionTypeChanged);
 	actionComp->OnDoSubAction.AddDynamic(this, &UPlayerAnimInstance::OnDoSubAction);
+
+	UStateComponent* stateComp = CHelpers::GetComponent<UStateComponent>(ownerPawn);
+	CheckNull(stateComp);
+
+	stateComp->OnStateTypeChanged.AddDynamic(this, &UPlayerAnimInstance::OnStateTypeChanged);
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSecnods)
@@ -32,6 +37,11 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSecnods)
 void UPlayerAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionType InNewType)
 {
 	ActionType = InNewType;
+}
+
+void UPlayerAnimInstance::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	StateType = InNewType;
 }
 
 void UPlayerAnimInstance::OnDoSubAction(bool InSubAction)

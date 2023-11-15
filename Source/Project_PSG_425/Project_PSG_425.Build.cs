@@ -17,7 +17,10 @@ public class Project_PSG_425 : ModuleRules
 			"Engine",
 			"InputCore",
 			"Slate",
-			"UMG"
+			"UMG",
+			"AIModule",
+			"GameplayTasks",
+			"NavigationSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

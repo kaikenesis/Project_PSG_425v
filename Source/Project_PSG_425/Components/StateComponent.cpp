@@ -46,6 +46,11 @@ void UStateComponent::SetActionMode()
 	ChangeType(EStateType::Action);
 }
 
+void UStateComponent::SetGuardMode()
+{
+	ChangeType(EStateType::Guard);
+}
+
 void UStateComponent::SetBlockMode()
 {
 	ChangeType(EStateType::Block);

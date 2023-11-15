@@ -40,7 +40,7 @@ private: //Scene Component
 		class UWidgetComponent* HealthWidget;
 
 protected: //Actor Component
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly)
 		class UActionComponent* Action;
 
 private: //Actor Component

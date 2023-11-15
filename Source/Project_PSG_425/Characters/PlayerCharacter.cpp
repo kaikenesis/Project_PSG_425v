@@ -9,6 +9,7 @@
 #include "Components/StateComponent.h"
 #include "Components/ActionComponent.h"
 #include "Components/MontagesComponent.h"
+#include "Components/CapsuleComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -88,6 +89,31 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("SubAction", IE_Released, this, &APlayerCharacter::OffSubAction);
 }
 
+float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Attacker = Cast<ACharacter>(EventInstigator->GetPawn());
+	Causer = DamageCauser;
+
+	Action->AbortByDamaged();
+	Status->DecreaseHealth(DamageValue);
+
+	if (Status->IsDead())
+	{
+		State->SetDeadMode();
+		return DamageValue;
+	}
+
+	if (Action->IsSubAction())
+	{
+		State->SetBlockMode();
+		return DamageValue;
+	}
+
+	State->SetHittedMode();
+	return DamageValue;
+}
+
 void APlayerCharacter::OnOneHandShield()
 {
 	CheckFalse(State->IsIdleMode());
@@ -134,13 +160,46 @@ void APlayerCharacter::OffSubAction()
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
 }
 
+void APlayerCharacter::Blocked()
+{
+	CLog::Print("Block");
+	Montages->PlayBlock();
+}
+
+void APlayerCharacter::Hitted()
+{
+	CLog::Print("Hit");
+	Montages->PlayHitted();
+}
+
+void APlayerCharacter::Dead()
+{
+	CheckFalse(State->IsDeadMode());
+
+	APlayerController* controller = GetController<APlayerController>();
+	if (!!controller)
+		DisableInput(controller);
+
+	Montages->PlayDead();
+
+	Action->OffAllCollisions();
+	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
+
+	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 5.f, false);
+}
+
+void APlayerCharacter::End_Dead()
+{
+	Action->End_Dead();
+}
+
 void APlayerCharacter::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
 	{
-	case EStateType::Roll:		Montages->PlayRoll();		break;
-	case EStateType::Hitted:	Montages->PlayHitted();		break;
-	case EStateType::Dead:		Montages->PlayDead();		break;
+	case EStateType::Block:		Blocked();	break;
+	case EStateType::Hitted:	Hitted();	break;
+	case EStateType::Dead:		Dead();		break;
 	}
 }
 
@@ -181,11 +240,16 @@ void APlayerCharacter::OnVerticalLook(float Axis)
 void APlayerCharacter::OnWalk()
 {
 	CheckTrue(Action->IsSubAction());
-	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
+	Status->ChangeMoveSpeed(EWalkSpeedType::Walk);
 }
 
 void APlayerCharacter::OffWalk()
 {
 	CheckTrue(Action->IsSubAction());
-	GetCharacterMovement()->MaxWalkSpeed = Status->GetSprintSpeed();
+	Status->ChangeMoveSpeed(EWalkSpeedType::Sprint);
+}
+
+FGenericTeamId APlayerCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId(PlayerTeamID);
 }
