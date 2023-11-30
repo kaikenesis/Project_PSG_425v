@@ -43,6 +43,20 @@ public:
 	void IncreaseHealth(float InAmount);
 	void DecreaseHealth(float InAmount);
 
+public: // Abnormality Func
+	void PlayBurn(float InTickTime, int32 InTickCount, float TickDamage, FTransform InTransform, bool IsLoop = false, class UParticleSystem* InParticle = nullptr);
+	void PlayEffect(class UParticleSystem* InParticle, FTransform InTransform, float InTime);
+
+private:
+	void UpdateHealthWidget();
+
+	UFUNCTION()
+		void Burn();
+
+	FORCEINLINE void SetBurnCount(int32 InTickCount) { BurnCount = InTickCount; }
+	FORCEINLINE void SetBurnTickDamage(float TickDamage) { BurnTickDamage = TickDamage; }
+	FORCEINLINE void SetBurnDebuff(class ABuffParticle* InBuff) { BurnDebuff = InBuff; }
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 		float WalkSpeed[(int32)EWalkSpeedType::Max] = { 200.f, 400.f, 600.f };
@@ -50,7 +64,23 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Health")
 		float MaxHealth = 100.f;
 
+private: // Abnormality Val
+	UPROPERTY(EditAnywhere, Category = "Abnormality")
+		bool BurnImmune;
+
+	int32 BurnCount = 0;
+	float BurnTickDamage = 0.f;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ABuffParticle> ParticleClass;
+
+	class ABuffParticle* BurnDebuff = nullptr;
+
 private:
 	bool bCanMove = true;
 	float CurrentHealth;
+
+	class ACharacter* OwnerCharacter;
+	class UStateComponent* StateComp;
+	class UHealthWidget* HealthWidget;
 };

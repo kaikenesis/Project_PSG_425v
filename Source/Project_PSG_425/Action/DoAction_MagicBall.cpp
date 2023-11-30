@@ -98,6 +98,12 @@ void ADoAction_MagicBall::OnMagicBallBeginOverlap(FHitResult InHitResult)
 {
 	FDamageEvent damageEvent;
 	InHitResult.Actor->TakeDamage(Datas[0].Power, damageEvent, OwnerCharacter->GetController(), this);
+
+	//Play Abnormal Status & Particle
+	UStatusComponent* statusComp= CHelpers::GetComponent<UStatusComponent>(InHitResult.Actor.Get());
+	if(!!statusComp)
+		statusComp->PlayBurn(1.f, 10, 5.f, Datas[0].EffectTransform, true, Datas[0].Effect);
+	
 }
 
 void ADoAction_MagicBall::AbortByTypeChanged(EActionType InPrevType, EActionType InNewType)

@@ -25,7 +25,7 @@ void APatrolPath::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 
 	Spline->SetClosedLoop(bClosedLoop);
-	Text->SetText(GetActorLabel());
+	Text->K2_SetText(FText::FromString(GetActorLabel()));
 }
 
 void APatrolPath::BeginPlay()
